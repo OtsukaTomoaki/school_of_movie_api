@@ -32,11 +32,13 @@ services:
         MINIO_ROOT_USER: user
         MINIO_ROOT_PASSWORD: 123456789o
     entrypoint: bash
-    command: -c "/opt/bin/minio server /export --address :9999 --console-address :9001"
+    command: -c "/opt/bin/minio server /export --address :9000 --console-address :9001"
     volumes:
         - ./docker/minio/data:/export
     ports:
-        - '9000:9999'
+        - '9000:9000'
         - '9001:9001'
 volumes:
   mysql_data:
+  minio:
+    driver: local
