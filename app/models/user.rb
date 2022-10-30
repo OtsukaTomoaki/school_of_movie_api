@@ -9,6 +9,7 @@ class User < ApplicationRecord
   validates :email, presence: true, length: { maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: true
   validates :password, presence: true, length: { minimum: 6 }, on: :create
   has_secure_password
+  has_one_attached :avator_image
 
   # 渡された文字列のハッシュ値を返す
   def User.digest(string)
