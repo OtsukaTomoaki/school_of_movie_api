@@ -25,5 +25,18 @@ services:
       - db
     tty: true
     stdin_open: true
+  minio:
+    image: 'minio/minio'
+    container_name: minio
+    environment:
+        MINIO_ROOT_USER: user
+        MINIO_ROOT_PASSWORD: 123456789o
+    entrypoint: bash
+    command: -c "/opt/bin/minio server /export --address :9999 --console-address :9001"
+    volumes:
+        - ./docker/minio/data:/export
+    ports:
+        - '9000:9999'
+        - '9001:9001'
 volumes:
   mysql_data:
