@@ -1,0 +1,29 @@
+version: '3'
+services:
+  db:
+    platform: linux/x86_64
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: myrootpass
+      MYSQL_DATABASE: project_manage_api_development
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+  web:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - .:/project_manage_api/
+    ports:
+      - 3000:3000
+    links:
+      - db
+    depends_on:
+      - db
+    tty: true
+    stdin_open: true
+volumes:
+  mysql_data:
