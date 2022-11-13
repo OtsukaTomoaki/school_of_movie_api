@@ -30,3 +30,8 @@
 
 # minio
 docker/minio/data/*
+
+.env
+/config/credentials/development.key
+
+service.key
