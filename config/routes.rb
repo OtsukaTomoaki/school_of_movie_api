@@ -3,7 +3,8 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "articles#index"
-  post '/auth/:provider/callback', to: 'sessions#create'
+  get 'auth/:provider/callback', to: 'sessions#create'
+  resources :sessions, only: %i[index new create destroy]
   namespace :api, {format: 'json'} do
     namespace :v1 do
       get 'users/avator_image_download', to: 'users#avator_image_download'
