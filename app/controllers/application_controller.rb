@@ -18,6 +18,5 @@ class ApplicationController < ActionController::API
       domain: 'localhost:3000', # 親ドメイン
       value: form_authenticity_token
     }
-    print('------csrf set------')
   end
 end
