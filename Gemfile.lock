@@ -124,6 +124,7 @@ GEM
     globalid (1.0.0)
       activesupport (>= 5.0)
     hashie (5.0.0)
+    httpclient (2.8.3)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     io-console (0.5.11)
@@ -277,6 +278,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails
   faker
+  httpclient
   jbuilder
   jwt
   mysql2 (~> 0.5)
