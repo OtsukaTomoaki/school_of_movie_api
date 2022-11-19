@@ -38,6 +38,8 @@ gem "rack-cors"
 
 gem 'dotenv'
 
+gem "dotenv-rails"
+
 gem 'bcrypt'
 
 gem 'jbuilder'
@@ -45,8 +47,6 @@ gem 'jbuilder'
 gem "aws-sdk-s3", require: false
 
 gem 'jwt'
-
-gem 'devise'
 
 gem 'omniauth'
 
