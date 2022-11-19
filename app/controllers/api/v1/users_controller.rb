@@ -1,4 +1,6 @@
 class Api::V1::UsersController < ApplicationController
+  skip_before_action :check_logged_in, only: :create
+
   def index
     @users = User.all
   end
