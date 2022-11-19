@@ -9,7 +9,6 @@ class SessionsController < ApplicationController
   end
 
   def create
-    binding.pry
     if (user = User.find_or_create_from_auth_hash(auth_hash))
       log_in user
     end
