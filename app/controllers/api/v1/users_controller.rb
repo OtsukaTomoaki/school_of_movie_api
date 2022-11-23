@@ -1,4 +1,5 @@
 class Api::V1::UsersController < ApplicationController
+  # include SocialClientService
   skip_before_action :check_logged_in, only: :create
 
   def index
@@ -20,11 +21,18 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def create_with_social_accounts
+    onetime_token = params[:onetime_token]
+    type = params[:type]
+    exchange_token = OneTimeToken.find_valid_token(onetime_token)
+
+    user = SocialClientService.create_accounts_with_google_profile!(exchange_token)
+  end
+
   def avator_image_download
     user = User.first
     send_data user.avator_image.download, type: "image/jpg", disposition: 'inline'
   end
-
 
   private
     def user_params
