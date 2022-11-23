@@ -14,7 +14,14 @@ class SocialClientService
 
       user.avator_image.attach(io: avator_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpeg" )
 
-      user.save!(validate: false)
+      ActiveRecord::Base.transaction do
+        user.save!(validate: false)
+        SocialAccountMapping.create!({
+          social_id: SocialAccountMapping.social_ids[:google],
+          email: user.email,
+          social_account_id: profile['id']
+        })
+      end
     end
 
     private

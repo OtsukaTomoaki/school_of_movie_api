@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_19_105011) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_23_093248) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -42,6 +42,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_19_105011) do
   create_table "one_time_tokens", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
     t.string "exchange_token"
     t.datetime "expires_at"
+  end
+
+  create_table "social_account_mappings", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
+    t.integer "social_id", null: false, comment: "SNSのID"
+    t.string "email", null: false
+    t.string "social_account_id", null: false, comment: "連携するSNSのユーザID"
+    t.index ["social_id", "email"], name: "index_social_account_mappings_on_social_id_and_email", unique: true
   end
 
   create_table "users", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|

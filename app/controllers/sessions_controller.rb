@@ -5,15 +5,21 @@ class SessionsController < ApplicationController
     set_csrf_token
 
     render status: 200, json: { status: 200 }
-
   end
 
   def create
     auth_hash_param = auth_hash
     converted_param = AuthParamConverter.ConvertGoogleAuth2User(auth_hash_param)
-    if (user = User.find_by(email: converted_param[:email]))
-      log_in user
-      redirect_to ENV['ROOT_URL']
+    if (jwt = AuthenticationService.authenticate_user_with_social_account!(
+        converted_param[:email],
+        auth_hash_param.uid,
+        :google))
+      onetime_token = OneTimeToken.create({ exchange_token: jwt })
+      signup_json_str = {
+        onetime_token: onetime_token.id
+      }.to_json.to_s
+      oauth_provider_json = URI.encode_www_form(signup_state: Base64.encode64(signup_json_str))
+      redirect_to ENV['ROOT_URL'] + "signin_with_token?#{oauth_provider_json}"
     else
       google_token = auth_hash['credentials']['token']
       onetime_token = OneTimeToken.create({ exchange_token: google_token })

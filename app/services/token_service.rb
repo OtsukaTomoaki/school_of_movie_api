@@ -13,6 +13,15 @@ class TokenService
       issue_token(user)
     end
 
+    def issue_by_social_account(email, social_account_id, social_type)
+      user = SocialAccountMapping.authenticate_user_with_social_account!(
+              email,
+              social_account_id,
+              social_type
+            )
+      issue_token(user)
+    end
+
     def authorization(auth_header)
       jwt = auth_header.split(' ')[1]
       jwt_payload = validate_jwt(jwt)
