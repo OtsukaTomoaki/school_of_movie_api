@@ -14,7 +14,7 @@ class TokenService
     end
 
     def issue_by_social_account(email, social_account_id, social_type)
-      user = SocialAccountMapping.authenticate_user_with_social_account!(
+      user = AuthenticationService.authenticate_user_with_social_account!(
               email,
               social_account_id,
               social_type
