@@ -84,6 +84,7 @@ GEM
       aws-sigv4 (~> 1.4)
     aws-sigv4 (1.5.2)
       aws-eventstream (~> 1, >= 1.0.2)
+    base64 (0.1.1)
     bcrypt (3.1.18)
     bootsnap (1.13.0)
       msgpack (~> 1.2)
@@ -134,6 +135,7 @@ GEM
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     jmespath (1.6.1)
+    json (2.6.2)
     jwt (2.5.0)
     loofah (2.19.0)
       crass (~> 1.0.2)
@@ -257,6 +259,7 @@ GEM
     timeout (0.3.0)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
+    uri (0.11.0)
     version_gem (1.1.1)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
@@ -270,6 +273,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-s3
+  base64
   bcrypt
   bootsnap
   capybara
@@ -280,6 +284,7 @@ DEPENDENCIES
   faker
   httpclient
   jbuilder
+  json
   jwt
   mysql2 (~> 0.5)
   omniauth
@@ -292,6 +297,7 @@ DEPENDENCIES
   rails (~> 7.0.4)
   rspec-rails
   tzinfo-data
+  uri
 
 RUBY VERSION
    ruby 3.1.2p20

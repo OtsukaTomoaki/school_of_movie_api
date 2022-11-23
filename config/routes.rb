@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   namespace :api, {format: 'json'} do
     namespace :v1 do
       get 'users/avator_image_download', to: 'users#avator_image_download'
+      post 'users/create_with_social_accounts', to: 'users#create_with_social_accounts'
       resources :users
 
       resources :sessions
