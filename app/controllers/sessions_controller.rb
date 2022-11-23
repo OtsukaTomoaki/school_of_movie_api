@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
   def create
     auth_hash_param = auth_hash
     converted_param = AuthParamConverter.ConvertGoogleAuth2User(auth_hash_param)
-    if (jwt = AuthenticationService.authenticate_user_with_social_account!(
+    if (jwt = TokenService.issue_by_social_account(
         converted_param[:email],
         auth_hash_param.uid,
         :google))

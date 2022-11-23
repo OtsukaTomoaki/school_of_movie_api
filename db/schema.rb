@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_23_093248) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_23_185310) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -40,7 +40,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_23_093248) do
   end
 
   create_table "one_time_tokens", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
-    t.string "exchange_token"
+    t.text "exchange_token"
     t.datetime "expires_at"
   end
 
