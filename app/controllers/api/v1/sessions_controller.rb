@@ -20,7 +20,7 @@ class Api::V1::SessionsController < ApplicationController
       user.remember
       render json: { token: token, remember_token: user.remember_token }, status: :ok
     else
-      render json: { token: 'foo' }, status: :ok
+      render json: { }, status: :unauthorized
     end
   end
 end
