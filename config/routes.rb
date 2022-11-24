@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       post 'users/create_with_social_accounts', to: 'users#create_with_social_accounts'
       resources :users
 
+      post 'sessions/remember_me', to: 'sessions#remember_me'
       resources :sessions
     end
   end
