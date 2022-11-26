@@ -17,6 +17,7 @@ class SessionsController < ApplicationController
       user.remember
       onetime_token = OneTimeToken.create({ exchange_token: user.remember_token })
       signup_json_str = {
+        email: converted_param[:email],
         onetime_token: onetime_token.id
       }.to_json.to_s
       oauth_provider_json = URI.encode_www_form(signin_state: Base64.encode64(signup_json_str))
