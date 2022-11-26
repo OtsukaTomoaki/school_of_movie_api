@@ -35,9 +35,7 @@ class AuthenticationService
                 email: email,
                 social_account_id: social_account_id,
                 social_id: SocialAccountMapping.social_ids[social_type])
-    
-    binding.pry
-    
+
     raise UnAuthorizationError unless mapping and user = User.find_by(email: mapping.email)
     user
   end
