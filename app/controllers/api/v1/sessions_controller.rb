@@ -1,5 +1,5 @@
 class Api::V1::SessionsController < ApplicationController
-  skip_before_action :check_logged_in, only: :create
+  skip_before_action :check_logged_in, only: [:create, :remember_me]
 
   def create
     user = User.find_by(email: params[:email].downcase)

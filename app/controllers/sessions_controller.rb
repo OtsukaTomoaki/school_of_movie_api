@@ -18,7 +18,7 @@ class SessionsController < ApplicationController
 
       signin_json_str = {
         email: user.email,
-        remember_token: user.remember_digest
+        remember_token: user.remember_token
       }.to_json.to_s
 
       query = URI.encode_www_form(signin_state: Base64.encode64(signin_json_str))
