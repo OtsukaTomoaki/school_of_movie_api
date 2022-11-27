@@ -2,8 +2,8 @@ class Api::V1::UsersController < ApplicationController
   # include SocialClientService
   skip_before_action :current_user, only: :create
 
-  def index
-    @users = User.all
+  def profile
+    @user = @current_user
   end
 
   def create
