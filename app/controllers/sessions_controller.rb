@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  skip_before_action :check_logged_in, only: :create
+  skip_before_action :current_user, only: :create
 
   def index
     set_csrf_token
