@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   # include SocialClientService
-  skip_before_action :check_logged_in, only: :create
+  skip_before_action :current_user, only: :create
 
   def index
     @users = User.all

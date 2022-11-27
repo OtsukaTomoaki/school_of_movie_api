@@ -4,12 +4,15 @@ class ApplicationController < ActionController::API
   include ActionController::RequestForgeryProtection
 
   skip_forgery_protection
-  before_action :check_logged_in
+  before_action :current_user
 
-  # protect_from_forgery
-  def check_logged_in
-    # return if current_user
-    # redirect_to ENV['ROOT_URL']
+  def current_user
+    begin
+      @current_user ||= TokenService.authorization(request.headers['Authorization'])
+    rescue => e
+      p request.headers, e
+      false
+    end
   end
 
   def set_csrf_token

@@ -1,5 +1,5 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  skip_before_action :check_logged_in, only: :google_oauth2
+  skip_before_action :current_user, only: :google_oauth2
 
   def google_oauth2
     callback_for(:google)
