@@ -23,10 +23,10 @@ class Api::V1::UsersController < ApplicationController
 
   def create_with_social_accounts
     onetime_token = params[:onetime_token]
-    type = params[:type]
-    exchange_token = OneTimeToken.find_valid_token(onetime_token)
+    exchange_json = OneTimeToken.find_valid_token(onetime_token)
 
-    user = SocialClientService.create_accounts_with_google_profile!(exchange_token)
+    user = SocialClientService.create_accounts_with_google_profile!(exchange_json['token'])
+    @user = user
   end
 
   def avator_image_download

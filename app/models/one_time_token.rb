@@ -5,9 +5,9 @@ class OneTimeToken < ApplicationRecord
     delete_all_expire_token
     token = find_by_id(id)
 
-    exchange_token = token.exchange_token
+    exchange_json = token.exchange_json
     token.delete
-    exchange_token
+    exchange_json
   end
 
   private

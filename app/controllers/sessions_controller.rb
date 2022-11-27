@@ -15,16 +15,21 @@ class SessionsController < ApplicationController
         auth_hash_param.uid,
         :google))
       user.remember
-      onetime_token = OneTimeToken.create({ exchange_token: user.remember_token })
-      signup_json_str = {
-        email: converted_param[:email],
-        onetime_token: onetime_token.id
+
+      signin_json_str = {
+        email: user.email,
+        remember_token: user.remember_digest
       }.to_json.to_s
-      oauth_provider_json = URI.encode_www_form(signin_state: Base64.encode64(signup_json_str))
-      redirect_to ENV['ROOT_URL'] + "signin_with_token?#{oauth_provider_json}"
+
+      query = URI.encode_www_form(signin_state: Base64.encode64(signin_json_str))
+      redirect_to ENV['ROOT_URL'] + "signin_with_token?#{query}"
     else
       google_token = auth_hash['credentials']['token']
-      onetime_token = OneTimeToken.create({ exchange_token: google_token })
+      onetime_token = OneTimeToken.create({ exchange_json: {
+          social_id: SocialAccountMapping.social_ids[:google],
+          token: google_token
+        }
+      })
 
       signup_json_str = {
         name: converted_param[:name],
