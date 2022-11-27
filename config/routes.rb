@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :sessions, only: %i[index new create destroy]
   namespace :api, {format: 'json'} do
     namespace :v1 do
+      get 'users/profile', to: 'users#profile'
       get 'users/avator_image_download', to: 'users#avator_image_download'
       post 'users/create_with_social_accounts', to: 'users#create_with_social_accounts'
       resources :users
