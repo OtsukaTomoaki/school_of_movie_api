@@ -30,8 +30,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def avator_image_download
-    user = User.first
-    send_data user.avator_image.download, type: "image/jpg", disposition: 'inline'
+    send_data @current_user.avator_image.download, type: "image/jpg", disposition: 'inline'
   end
 
   private
