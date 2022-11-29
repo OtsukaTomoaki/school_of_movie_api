@@ -14,6 +14,8 @@ Rails.application.routes.draw do
 
       post 'sessions/remember_me', to: 'sessions#remember_me'
       resources :sessions
+
+      resources :user_tags
     end
   end
 end

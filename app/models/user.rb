@@ -11,6 +11,8 @@ class User < ApplicationRecord
   has_secure_password
   has_one_attached :avator_image
 
+  has_many :user_tags, dependent: :destroy
+
   # 渡された文字列のハッシュ値を返す
   def User.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
