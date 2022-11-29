@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_27_141139) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_29_144550) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -49,6 +49,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_27_141139) do
     t.string "email", null: false
     t.string "social_account_id", null: false, comment: "連携するSNSのユーザID"
     t.index ["social_id", "email"], name: "index_social_account_mappings_on_social_id_and_email", unique: true
+  end
+
+  create_table "user_tags", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
+    t.string "user_id", limit: 36, null: false
+    t.text "tag", size: :tiny, null: false
   end
 
   create_table "users", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
