@@ -3,7 +3,7 @@ class Api::V1::UsersController < ApplicationController
   skip_before_action :current_user, only: :create
 
   def profile
-    @user = @current_user
+    @user = User.search(@current_user.id)
   end
 
   def create
