@@ -1,4 +1,4 @@
-class Api::V1::SessionsController < ApplicationController
+class Api::V1::SessionsController < Api::V1::ApplicationController
   skip_before_action :current_user, only: [:create, :remember_me]
 
   def create
