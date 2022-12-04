@@ -1,4 +1,4 @@
-class Api::V1::UserTagsController < ApplicationController
+class Api::V1::UserTagsController < Api::V1::ApplicationController
   def create
     user_id = @current_user.id
     @user_tag = UserTag.create!(user_tag_params)

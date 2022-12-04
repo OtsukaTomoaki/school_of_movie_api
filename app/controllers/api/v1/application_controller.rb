@@ -1,4 +1,20 @@
-class ApplicationController < ActionController::API
+class Api::V1::ApplicationController < ActionController::API
+  include SessionsHelper
+  include ActionController::Cookies
+  include ActionController::RequestForgeryProtection
+
+  skip_forgery_protection
+  before_action :current_user
+
+  def current_user
+    begin
+      @current_user ||= TokenService.authorization(request.headers['Authorization'])
+    rescue => e
+      p request.headers, e
+      return response_unauthorized
+    end
+  end
+
   # 200 Success
   def response_success(class_name, action_name)
     render status: 200, json: { status: 200, message: "Success #{class_name.capitalize} #{action_name.capitalize}" }
