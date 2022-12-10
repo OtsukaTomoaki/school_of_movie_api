@@ -47,8 +47,10 @@ jobs:
           # イメージのビルド
           docker-compose up -d
 
+      - name: Setup Database
+        shell: bash
+        run: |
           # データベースの作成
-          docker ps -a
           bundle exec rails db:create
           bundle exec rails db:migrate
         env:
