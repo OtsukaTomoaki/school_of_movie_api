@@ -41,6 +41,7 @@ jobs:
       - name: Setup
         shell: bash
         run: |
+          rm ruby.yml
           sudo gem install bundler
           bundle update
           bundle install --path vendor/bundle --quiet --jobs 4 --retry 3
