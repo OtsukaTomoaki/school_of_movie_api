@@ -19,6 +19,16 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: myrootpass
+          MYSQL_DATABASE: funny_cats_api_test
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypass
+        ports:
+          - "3306"
     strategy:
       matrix:
         ruby-version: ['3.1']
@@ -39,8 +49,8 @@ jobs:
 
           # データベースの作成
           docker ps -a
-          docker-compose run web rake db:create RAILS_ENV=test
-          docker-compose run web rake db:migrate RAILS_ENV=test
+          bundle exec rails db:create
+          bundle exec rails db:migrate
         env:
           RAILS_ENV: test
 
