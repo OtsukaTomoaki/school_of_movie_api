@@ -23,17 +23,6 @@ jobs:
     strategy:
       matrix:
         ruby-version: ['3.1']
-    services:
-      db:
-        image: mysql:5.7
-        ports:
-          - 50001:3306
-        env:
-          MYSQL_ROOT_PASSWORD: myrootpass
-          MYSQL_DATABASE: funny_cats_api_test
-          MYSQL_USER: myuser
-          MYSQL_PASSWORD: mypass
-        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
 
     steps:
     - uses: actions/checkout@v3
