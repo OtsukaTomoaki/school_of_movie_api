@@ -38,10 +38,14 @@ jobs:
           docker-compose up -d
 
           # データベースの作成
-          docker-compose run web rake db:create RAILS_ENV=test
-          docker-compose run web rake db:migrate RAILS_ENV=test
+          bundle rake db:create RAILS_ENV=test
+          bundle rake db:migrate RAILS_ENV=test
         env:
           RAILS_ENV: test
+
+      - name: run rubocop
+        run: |
+          bundle exec rubocop
 
       - name: Run tests
         shell: bash
