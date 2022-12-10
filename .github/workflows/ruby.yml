@@ -42,6 +42,7 @@ jobs:
         shell: bash
         run: |
           rm ruby.yml
+          echo 3.0.2 > ruby.yml
           sudo gem install bundler
           bundle update
           bundle install --path vendor/bundle --quiet --jobs 4 --retry 3
