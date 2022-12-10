@@ -24,23 +24,22 @@ jobs:
         ruby-version: ['3.1']
 
     steps:
+      - name: Check out code
+        id: checkout
+        uses: actions/checkout@v2
+
       - name: Show Docker containers
         run: docker ps -a
 
-      - uses: actions/checkout@v3
       - name: Setup docker
         shell: bash
         run: |
           # イメージのビルド
-          docker-compose build
-          # mysqlの起動
-          # docker-compose run db /etc/init.d/mysql start
-          docker-compose run db /etc/init.d/mysql stop
-          docker-compose run db usermod -d /var/lib/mysql/ mysql
-          docker-compose run db /etc/init.d/mysql start
+          docker-compose up -d
+
           # データベースの作成
           docker-compose run web rake db:create RAILS_ENV=test
-          docker-compose run web rake db:migrate
+          docker-compose run web rake db:migrate RAILS_ENV=test
         env:
           RAILS_ENV: test
 
