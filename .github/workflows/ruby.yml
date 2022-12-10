@@ -38,14 +38,13 @@ jobs:
         id: checkout
         uses: actions/checkout@v2
 
-      - name: Show Docker containers
-        run: docker ps -a
-
-      - name: Setup docker
+      - name: Setup
         shell: bash
         run: |
-          # イメージのビルド
-          docker-compose up -d
+          gem install bundler
+          bundle install --path vendor/bundle --quiet --jobs 4 --retry 3
+          bundle install
+          rails active_storage:install
 
       - name: Setup Database
         shell: bash
@@ -63,8 +62,6 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
-          gem install bundler
-          bundle install --path vendor/bundle --quiet --jobs 4 --retry 3
           bundle exec rspec
         env:
           RAILS_ENV: test
