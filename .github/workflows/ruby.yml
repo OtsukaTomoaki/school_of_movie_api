@@ -24,10 +24,10 @@ jobs:
       matrix:
         ruby-version: ['3.1']
     services:
-      mysql:
+      db:
         image: mysql:5.7
         ports:
-          - 50002:3306
+          - 50001:3306
         env:
           MYSQL_ROOT_PASSWORD: myrootpass
           MYSQL_DATABASE: funny_cats_api_test
