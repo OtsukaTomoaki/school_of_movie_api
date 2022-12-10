@@ -38,6 +38,9 @@ jobs:
           docker-compose up -d
 
           # データベースの作成
+          mkdir home/mysql
+          docker-compose run db mkdir home/mysql
+          docker-compose run db etc/init.d/mysql start
           docker-compose run web rake db:create RAILS_ENV=test
           docker-compose run web rake db:migrate RAILS_ENV=test
         env:
