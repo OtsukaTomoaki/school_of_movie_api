@@ -35,9 +35,9 @@ jobs:
           docker-compose build
           # mysqlの起動
           # docker-compose run db /etc/init.d/mysql start
-          docker-compose run db service mysql stop
+          docker-compose run db /etc/init.d/mysql stop
           docker-compose run db usermod -d /var/lib/mysql/ mysql
-          docker-compose run db service mysql start
+          docker-compose run db /etc/init.d/mysql start
           # データベースの作成
           docker-compose run web rake db:create RAILS_ENV=test
           docker-compose run web rake db:migrate
