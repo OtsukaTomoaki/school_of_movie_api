@@ -18,21 +18,53 @@ permissions:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: myrootpass
+          MYSQL_DATABASE: funny_cats_api_test
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypass
+        ports:
+          - "3306"
     strategy:
       matrix:
-        ruby-version: ['2.6', '2.7', '3.0']
+        ruby-version: ['3.1']
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Ruby
-    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-    # change this to (see https://github.com/ruby/setup-ruby#versioning):
-    # uses: ruby/setup-ruby@v1
-      uses: ruby/setup-ruby@0a29871fe2b0200a17a4497bae54fe5df0d973aa # v1.115.3
-      with:
-        ruby-version: ${{ matrix.ruby-version }}
-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-    - name: Run tests
-      run: bundle exec rake
+      - name: Check out code
+        id: checkout
+        uses: actions/checkout@v2
+
+      - name: Show Docker containers
+        run: docker ps -a
+
+      - name: Setup docker
+        shell: bash
+        run: |
+          # イメージのビルド
+          docker-compose up -d
+
+      - name: Setup Database
+        shell: bash
+        run: |
+          # データベースの作成
+          bundle exec rails db:create
+          bundle exec rails db:migrate
+        env:
+          RAILS_ENV: test
+
+      - name: run rubocop
+        run: |
+          bundle exec rubocop
+
+      - name: Run tests
+        shell: bash
+        run: |
+          gem install bundler
+          bundle install --path vendor/bundle --quiet --jobs 4 --retry 3
+          bundle exec rspec
+        env:
+          RAILS_ENV: test
