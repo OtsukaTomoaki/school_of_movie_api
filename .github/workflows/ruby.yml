@@ -55,8 +55,6 @@ jobs:
           docker-compose run web rake db:migrate
         env:
           RAILS_ENV: test
-          DATABASE_HOST: 127.0.0.1
-          DATABASE_PORT: 50002
 
       - name: Run tests
         shell: bash
@@ -66,5 +64,3 @@ jobs:
           bundle exec rspec
         env:
           RAILS_ENV: test
-          DATABASE_HOST: 127.0.0.1
-          DATABASE_PORT: 50003
