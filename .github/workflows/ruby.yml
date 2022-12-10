@@ -22,7 +22,7 @@ jobs:
     services:
       db:
         image: mysql:5.7
-        environment:
+        env:
           MYSQL_ROOT_PASSWORD: myrootpass
           MYSQL_DATABASE: funny_cats_api_test
           MYSQL_USER: myuser
