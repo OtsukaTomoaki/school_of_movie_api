@@ -31,14 +31,11 @@ jobs:
       - name: Setup docker
         shell: bash
         run: |
-          # イメージのビルド
-          docker-compose build
           # mysqlの起動
           sudo /etc/init.d/mysql start
           # データベースの作成
-          docker-compose up -d
-          docker-compose run web rake db:create
-          docker-compose run web rake db:migrate
+          bundle exec rails db:create RAILS_ENV=test
+          bundle exec rails db:migrate RAILS_ENV=test
         env:
           RAILS_ENV: test
 
