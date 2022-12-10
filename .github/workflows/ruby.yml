@@ -33,7 +33,7 @@ jobs:
           MYSQL_DATABASE: funny_cats_api_development
           MYSQL_USER: myuser
           MYSQL_PASSWORD: mypass
-    options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
 
     steps:
     - uses: actions/checkout@v3
