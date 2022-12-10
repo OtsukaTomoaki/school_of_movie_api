@@ -47,24 +47,24 @@ jobs:
       - name: Show databases for user1
         run: mysql --protocol=tcp -h localhost -P 3306 -u user1 -puser1_password -e "SHOW DATABASES"
 
-    - uses: actions/checkout@v3
-    - name: Setup docker
-      shell: bash
-      run: |
-        # イメージのビルド
-        docker-compose build
+      - uses: actions/checkout@v3
+      - name: Setup docker
+        shell: bash
+        run: |
+          # イメージのビルド
+          docker-compose build
 
-        # データベースの作成
-        docker-compose run web rake db:create
-        docker-compose run web rake db:migrate
-      env:
-        RAILS_ENV: test
+          # データベースの作成
+          docker-compose run web rake db:create
+          docker-compose run web rake db:migrate
+        env:
+          RAILS_ENV: test
 
-    - name: Run tests
-      shell: bash
-      run: |
-        gem install bundler
-        bundle install --path vendor/bundle --quiet --jobs 4 --retry 3
-        bundle exec rspec
-      env:
-        RAILS_ENV: test
+      - name: Run tests
+        shell: bash
+        run: |
+          gem install bundler
+          bundle install --path vendor/bundle --quiet --jobs 4 --retry 3
+          bundle exec rspec
+        env:
+          RAILS_ENV: test
