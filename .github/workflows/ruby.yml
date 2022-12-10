@@ -29,8 +29,11 @@ jobs:
         ports:
           - 50001:3306
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
+          MYSQL_ROOT_PASSWORD: myrootpass
+          MYSQL_DATABASE: funny_cats_api_development
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypass
+    options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
 
     steps:
     - uses: actions/checkout@v3
