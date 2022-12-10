@@ -16,6 +16,38 @@ on:
 permissions:
   contents: read
 
+services:
+  db:
+    platform: linux/x86_64
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: myrootpass
+      MYSQL_DATABASE: funny_cats_api_development
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  minio:
+    image: 'minio/minio'
+    container_name: minio
+    environment:
+        MINIO_ROOT_USER: user
+        MINIO_ROOT_PASSWORD: 123456789o
+    entrypoint: bash
+    command: -c "/opt/bin/minio server /export --address :9000 --console-address :9001"
+    volumes:
+        - ./docker/minio/data:/export
+    ports:
+        - '9000:9000'
+        - '9001:9001'
+  volumes:
+    mysql_data:
+    minio:
+      driver: local
+
 jobs:
   test:
     runs-on: ubuntu-latest
