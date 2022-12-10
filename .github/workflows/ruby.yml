@@ -42,8 +42,8 @@ jobs:
         shell: bash
         run: |
           sudo gem install bundler
+          bundle update
           bundle install --path vendor/bundle --quiet --jobs 4 --retry 3
-          bundle install
           rails active_storage:install
 
       - name: Setup Database
