@@ -48,7 +48,8 @@ jobs:
         run: |
           # イメージのビルド
           docker-compose build
-
+          # mysqlの起動
+          sudo /etc/init.d/mysql start
           # データベースの作成
           docker-compose run web rake db:create
           docker-compose run web rake db:migrate
