@@ -56,12 +56,11 @@ jobs:
           gem install bundler
           bundle install --jobs 4 --retry 3 --path vendor/bundle
 
-      - name: Wait for db
-        run: |
-          while ! docker-compose exec -T db mysql -e "SELECT 1" >/dev/null 2>&1
-          do
-            sleep 1
-          done
+      - name: Show databases for root user
+        run: mysql --protocol=tcp -h localhost -P 3306 -u root -pmyrootpass -e "SHOW DATABASES"
+
+      - name: Show databases for myuser
+        run: mysql --protocol=tcp -h localhost -P 3306 -u myuser -pmypass -e "SHOW DATABASES"
 
       - name: Database create and migrate
         shell: bash
