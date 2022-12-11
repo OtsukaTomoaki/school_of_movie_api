@@ -19,51 +19,37 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    services:
-      db:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: myrootpass
-          MYSQL_DATABASE: funny_cats_api_test
-          MYSQL_USER: myuser
-          MYSQL_PASSWORD: mypass
-        ports:
-          - "3306"
     strategy:
       matrix:
-        ruby-version: ['3.0']
+        ruby-version: ['3.1']
 
     steps:
       - name: Check out code
         id: checkout
         uses: actions/checkout@v2
 
-      - name: Setup
-        shell: bash
-        run: |
-          rm .ruby-version
-          echo 3.0.2 > .ruby-version
-          sudo gem install bundler
-          bundle update
-          bundle install --path vendor/bundle --quiet --jobs 4 --retry 3
-          rails active_storage:install
+      - name: Show Docker containers
+        run: docker ps -a
 
-      - name: Setup Database
+      - name: Setup docker
         shell: bash
         run: |
+          # イメージのビルド
+          docker-compose up -d
           # データベースの作成
-          bundle exec rails db:create
-          bundle exec rails db:migrate
+          docker ps -a
+          docker-compose run web rake db:create RAILS_ENV=test
+          docker-compose run web rake db:migrate RAILS_ENV=test
+        env:
+          RAILS_ENV: test
+
+      - name: Run tests
+        shell: bash
+        run: |
+          docker-compose run web bundle exec rspec
         env:
           RAILS_ENV: test
 
       - name: Run rubocop
         run: |
-          bundle exec rubocop
-
-      - name: Run tests
-        shell: bash
-        run: |
-          bundle exec rspec
-        env:
-          RAILS_ENV: test
+          docker-compose run web bundle exec rubocop
