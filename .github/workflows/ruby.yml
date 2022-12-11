@@ -57,7 +57,9 @@ jobs:
           bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Show databases for root user
-        run: mysql --protocol=tcp -h localhost -P 3306 -u root -pmyrootpass -e "SHOW DATABASES"
+        run: |
+          docker-compose down -v
+          mysql --protocol=tcp -h localhost -P 3306 -u root -pmyrootpass -e "SHOW DATABASES"
 
       - name: Show databases for myuser
         run: mysql --protocol=tcp -h localhost -P 3306 -u myuser -pmypass -e "SHOW DATABASES"
