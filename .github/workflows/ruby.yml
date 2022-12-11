@@ -54,6 +54,13 @@ jobs:
         env:
           RAILS_ENV: test
 
+      - name: Setup test data
+        shell: bash
+        run: |
+          cp auth/service.key.dummy auth/service.key
+        env:
+          RAILS_ENV: test
+
       - name: Run tests
         shell: bash
         run: |
