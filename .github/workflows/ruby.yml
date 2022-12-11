@@ -48,10 +48,8 @@ jobs:
       - name: Database create and migrate
         shell: bash
         run: |
-          # cp config/database.yml.ci config/database.yml
           docker ps
           bundle exec rails -v
-          exit
 
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
@@ -61,10 +59,10 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
-          docker-compose run web bundle exec rspec
+          bundle exec rspec
         env:
           RAILS_ENV: test
 
       - name: Run rubocop
         run: |
-          docker-compose run web bundle exec rubocop
+          bundle exec rubocop
