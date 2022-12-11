@@ -11,4 +11,4 @@ default: &default
 test:
   <<: *default
   database: funny_cats_api_test
-  host: 0.0.0.0:3306
+  host: {host}:3306

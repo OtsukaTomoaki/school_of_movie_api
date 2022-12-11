@@ -40,6 +40,11 @@ jobs:
           docker ps -a
           docker-compose run web ls -a
           rm config/database.yml
+          DB_HOST=`docker-compose run db hostname -i`
+          echo $DB_HOST
+
+          docker-compose run db sed s/{host}/$DB_HOST/ config/database.yml.ci
+          docker-compose run db cat config/database.yml.ci
           mv config/database.yml.ci config/database.yml
           docker-compose run web rake db:create RAILS_ENV=test
           docker-compose run web rake db:migrate RAILS_ENV=test
