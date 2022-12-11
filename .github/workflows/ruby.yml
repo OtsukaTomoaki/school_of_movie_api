@@ -23,31 +23,43 @@ jobs:
       matrix:
         ruby-version: ['3.1']
 
+    db:
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
+
     steps:
-      - name: Check out code
-        id: checkout
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Show Docker containers
-        run: docker ps -a
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
 
-      - name: Setup docker
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Bundler and gem install
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3 --path vendor/bundle
+
+      - name: Database create and migrate
         shell: bash
         run: |
-          # イメージのビルド
-          docker-compose up -d
-          # データベースの作成
-          docker ps -a
-          docker-compose run web ls -a
-          rm config/database.yml
-          DB_HOST=`docker-compose run db hostname -i`
-          echo $DB_HOST
-
-          docker-compose run db sed s/{host}/$DB_HOST/ config/database.yml.ci
-          docker-compose run db cat config/database.yml.ci
-          mv config/database.yml.ci config/database.yml
-          docker-compose run web rake db:create RAILS_ENV=test
-          docker-compose run web rake db:migrate RAILS_ENV=test
+          # cp config/database.yml.ci config/database.yml
+          bundle exec rails db:create RAILS_ENV=test
+          bundle exec rails db:migrate RAILS_ENV=test
         env:
           RAILS_ENV: test
 
