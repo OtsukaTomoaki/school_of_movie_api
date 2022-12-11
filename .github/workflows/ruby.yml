@@ -56,18 +56,20 @@ jobs:
           gem install bundler
           bundle install --jobs 4 --retry 3 --path vendor/bundle
 
+      - name: Setup test data
+        shell: bash
+        run: |
+          cp auth/service.key.dummy auth/service.key
+          rm config/database.yml
+          cp config/database.yml.ci config/database.yml
+        env:
+          RAILS_ENV: test
+
       - name: Database create and migrate
         shell: bash
         run: |
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
-        env:
-          RAILS_ENV: test
-
-      - name: Setup test data
-        shell: bash
-        run: |
-          cp auth/service.key.dummy auth/service.key
         env:
           RAILS_ENV: test
 
