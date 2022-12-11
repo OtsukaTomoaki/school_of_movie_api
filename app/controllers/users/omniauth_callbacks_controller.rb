@@ -1,4 +1,4 @@
-class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+class Users::OmniauthCallbacksController < OmniauthCallbacksController
   skip_before_action :current_user, only: :google_oauth2
 
   def google_oauth2
