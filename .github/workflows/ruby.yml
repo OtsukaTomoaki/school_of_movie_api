@@ -38,6 +38,9 @@ jobs:
           docker-compose up -d
           # データベースの作成
           docker ps -a
+          docker-compose run web ls -a
+          rm config/database.yml
+          mv config/database.yml.ci config/database.yml
           docker-compose run web rake db:create RAILS_ENV=test
           docker-compose run web rake db:migrate RAILS_ENV=test
         env:
