@@ -50,6 +50,9 @@ jobs:
         run: |
           # cp config/database.yml.ci config/database.yml
           docker ps
+          rails c
+          exit
+          
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
         env:
