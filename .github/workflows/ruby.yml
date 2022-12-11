@@ -23,6 +23,17 @@ jobs:
       matrix:
         ruby-version: ['3.1']
 
+    services:
+      db:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: myrootpass
+          MYSQL_DATABASE: funny_cats_api_development
+          MYSQL_USER: myuser
+          MYSQL_PASSWORD: mypass
+        ports:
+          - 3306:3306
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -48,7 +59,6 @@ jobs:
       - name: Database create and migrate
         shell: bash
         run: |
-          exit
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
         env:
