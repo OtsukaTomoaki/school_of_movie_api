@@ -6,7 +6,7 @@ class Api::V1::UserTagsController < Api::V1::ApplicationController
 
   private
     def user_tag_params
-      body = params.require(:user_tag).permit(:tag)
+      body = params.permit(:tag)
 
       {
         user_id: @current_user.id,
