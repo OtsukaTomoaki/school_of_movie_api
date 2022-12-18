@@ -4,7 +4,7 @@ RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
   describe "GET /index" do
     it 'プロフィールを取得する' do
       5.times do |i|
-        FactoryBot.create(:user,
+        user = FactoryBot.create(:user,
           name: 'Foo婆バズ',
           email: "#{i}_bar@gmail.com",
           password: 'Bar1234')
@@ -17,6 +17,7 @@ RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
 
       expect(json['name']).to eq('user')
       expect(json['email']).to eq('user@gmail.com')
+      expect(json['tags'].length).to eq(1)
     end
   end
 end
