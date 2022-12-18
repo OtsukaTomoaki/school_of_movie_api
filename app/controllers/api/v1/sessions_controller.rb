@@ -20,7 +20,7 @@ class Api::V1::SessionsController < Api::V1::ApplicationController
       user.remember
       render json: { token: token, remember_token: user.remember_token }, status: :ok
     else
-      render json: { }, status: :unauthorized
+      render json: { message: 'emailまたはremember_tokenが正しくありません' }, status: :unauthorized
     end
   end
 end
