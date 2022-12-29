@@ -1,10 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::UserTags", type: :request, authentication: :skip  do
+  describe 'index' do
+    it 'タグの一覧が取得できること' do
+      get '/api/v1'
+    end
+  end
   describe 'post' do
     let!(:tags) {
       tag = {
-        tag: "うわぁぁぁぁぁ!!!!!!!"
+        tag: "sample!!!!!!!"
       }
     }
     context 'タグの新規追加' do
@@ -13,7 +18,7 @@ RSpec.describe "Api::V1::UserTags", type: :request, authentication: :skip  do
 
         expect(response).to have_http_status 200
         json = JSON.parse(response.body)
-        expect(json['tag']).to eq 'うわぁぁぁぁぁ!!!!!!!'
+        expect(json['tag']).to eq 'sample!!!!!!!'
       end
     end
   end
