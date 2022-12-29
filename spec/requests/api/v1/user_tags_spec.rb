@@ -3,7 +3,9 @@ require 'rails_helper'
 RSpec.describe "Api::V1::UserTags", type: :request, authentication: :skip  do
   describe 'index' do
     it 'タグの一覧が取得できること' do
-      get '/api/v1'
+      get '/api/v1/user_tags'
+
+      expect(response).to have_http_status 200
     end
   end
   describe 'post' do
