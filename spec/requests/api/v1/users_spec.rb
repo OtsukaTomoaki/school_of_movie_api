@@ -17,7 +17,6 @@ RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
 
       expect(json['name']).to eq('user')
       expect(json['email']).to eq('user@gmail.com')
-      expect(json['tags'].length).to eq(1)
     end
   end
 end
