@@ -21,13 +21,13 @@ class Api::V1::ApplicationController < ActionController::API
   end
 
   # 400 Bad Request
-  def response_bad_request
-    render status: 400, json: { status: 400, message: 'Bad Request' }
+  def response_bad_request(message: 'Bad Request')
+    render status: 400, json: { status: 400, message: message }
   end
 
   # 401 Unauthorized
-  def response_unauthorized
-    render status: 401, json: { status: 401, message: 'Unauthorized' }
+  def response_unauthorized(message: 'Bad Request')
+    render status: 401, json: { status: 401, message: message }
   end
 
   # 404 Not Found
@@ -36,8 +36,8 @@ class Api::V1::ApplicationController < ActionController::API
   end
 
   # 409 Conflict
-  def response_conflict(class_name)
-    render status: 409, json: { status: 409, message: "#{class_name.capitalize} Conflict" }
+  def response_conflict(message: 'conflict')
+    render status: 409, json: { status: 409, message: message }
   end
 
   # 500 Internal Server Error
