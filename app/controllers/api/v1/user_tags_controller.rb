@@ -1,11 +1,19 @@
 class Api::V1::UserTagsController < Api::V1::ApplicationController
   def index
     @user_tags = UserTag.where(user_id: @current_user.id)
+    if params[:q]
+      @user_tags = @user_tags.where('tag LIKE ?', "%#{params[:q]}%")
+    end
   end
 
   def create
     user_id = @current_user.id
-    @user_tag = UserTag.create!(user_tag_params)
+    body = user_tag_params
+    if not UserTag.exists?(user_id: user_id, tag: body[:tag])
+      @user_tag = UserTag.create!(body)
+    else
+      response_bad_request(message: 'すでに登録されているタグです')
+    end
   end
 
   def destroy

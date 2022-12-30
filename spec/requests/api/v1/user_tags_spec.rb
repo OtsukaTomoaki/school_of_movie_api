@@ -4,11 +4,15 @@ RSpec.describe "Api::V1::UserTags", type: :request, authentication: :skip  do
   let!(:user_tags) {
     tag_1 = FactoryBot.create(:user_tag,
       user_id: authenticated_user.id,
-      tag: 'foobar'
+      tag: 'foo_bar_バズ'
     )
     tag_2 = FactoryBot.create(:user_tag,
       user_id: authenticated_user.id,
       tag: 'hoge_fuga_PIYO'
+    )
+    tag_3 = FactoryBot.create(:user_tag,
+      user_id: authenticated_user.id,
+      tag: '!テスト試験テスト!'
     )
     user_tags = [
       {
@@ -20,6 +24,11 @@ RSpec.describe "Api::V1::UserTags", type: :request, authentication: :skip  do
         id: tag_2.id,
         user_id: tag_2.user_id,
         tag: tag_2.tag
+      },
+      {
+        id: tag_3.id,
+        user_id: tag_3.user_id,
+        tag: tag_3.tag
       }
     ]
 
@@ -32,15 +41,59 @@ RSpec.describe "Api::V1::UserTags", type: :request, authentication: :skip  do
     let!(:body) {
       JSON.parse(user_tags.to_json)
     }
-    it 'タグの一覧が取得できること' do
-      get '/api/v1/user_tags'
+    context '全件取得する場合' do
+      it 'タグの一覧が取得できること' do
+        get '/api/v1/user_tags'
 
-      expect(response).to have_http_status 200
-      json = JSON.parse(response.body)
+        expect(response).to have_http_status 200
+        json = JSON.parse(response.body)
+        expect(json).to eq body
+      end
+      context '検索条件が指定されている場合' do
+        subject {
+          get "/api/v1/user_tags?q=#{search_word}"
+        }
+        context '前方部分一致の場合' do
+          let!(:search_word) { URI.encode_www_form_component('foo') }
+          it '1件取得できること' do
+            subject
+            expect(response).to have_http_status 200
+            json = JSON.parse(response.body)
 
-      expect(json).to eq body
+            res_user_tags = json['user_tags']
+            expect(res_user_tags.length).to eq 1
+            expect(res_user_tags.first['tag']).to eq 'foo_bar_バズ'
+          end
+        end
+        context '中間部分一致の場合' do
+          let!(:search_word) { URI.encode_www_form_component('_fuga') }
+          it '1件取得できること' do
+            subject
+            expect(response).to have_http_status 200
+            json = JSON.parse(response.body)
+
+            res_user_tags = json['user_tags']
+            expect(res_user_tags.length).to eq 1
+            expect(res_user_tags.first['tag']).to eq 'hoge_fuga_PIYO'
+          end
+        end
+        context '後方部分一致の場合' do
+          let!(:search_word) { URI.encode_www_form_component('テスト!') }
+
+          it '1件取得できること' do
+            subject
+            expect(response).to have_http_status 200
+            json = JSON.parse(response.body)
+
+            res_user_tags = json['user_tags']
+            expect(res_user_tags.length).to eq 1
+            expect(res_user_tags.first['tag']).to eq '!テスト試験テスト!'
+          end
+        end
+      end
     end
   end
+
   describe 'post' do
     let!(:tags) {
       tag = {
@@ -57,6 +110,7 @@ RSpec.describe "Api::V1::UserTags", type: :request, authentication: :skip  do
       end
     end
   end
+
   describe 'delete' do
     let!(:user_tag_id) {
       user_tag = FactoryBot.create(:user_tag,
