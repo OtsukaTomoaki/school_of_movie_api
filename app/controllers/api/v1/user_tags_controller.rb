@@ -1,6 +1,9 @@
 class Api::V1::UserTagsController < Api::V1::ApplicationController
   def index
     @user_tags = UserTag.where(user_id: @current_user.id)
+    if params[:q]
+      @user_tags = @user_tags.where('tag LIKE ?', "%#{params[:q]}%")
+    end
   end
 
   def create
