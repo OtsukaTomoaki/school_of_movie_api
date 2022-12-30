@@ -4,6 +4,7 @@ class Api::V1::UserTagsController < Api::V1::ApplicationController
     if params[:q]
       @user_tags = @user_tags.where('tag LIKE ?', "%#{params[:q]}%")
     end
+    @user_tags = @user_tags.order(created_at: :desc)
   end
 
   def create
