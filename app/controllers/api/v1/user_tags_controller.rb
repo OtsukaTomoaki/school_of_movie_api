@@ -9,10 +9,10 @@ class Api::V1::UserTagsController < Api::V1::ApplicationController
   end
 
   def destroy
-    @user_tags = UserTag.find_by(user_id: @current_user.id)
+    @user_tags = UserTag.find_by(id: params[:id], user_id: @current_user.id)
     if @user_tags
       @user_tags.destroy!
-      @id = @current_user.id
+      @id = params[:id]
     end
   end
 
