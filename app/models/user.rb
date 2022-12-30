@@ -14,7 +14,7 @@ class User < ApplicationRecord
   has_many :user_tags, dependent: :destroy
 
   def User.search(id)
-    includes(:user_tags).find_by(id: id)
+    find_by(id: id)
   end
 
   # 渡された文字列のハッシュ値を返す
