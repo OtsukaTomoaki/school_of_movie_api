@@ -1,1 +1,1 @@
-json.partial! partial: 'api/v1/user_tags/user_tag', locals: { user_tag: @user_tag }
+json.id @id

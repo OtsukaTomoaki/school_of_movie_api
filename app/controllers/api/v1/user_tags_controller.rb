@@ -12,6 +12,7 @@ class Api::V1::UserTagsController < Api::V1::ApplicationController
     @user_tags = UserTag.find_by(user_id: @current_user.id)
     if @user_tags
       @user_tags.destroy!
+      @id = @current_user.id
     end
   end
 
