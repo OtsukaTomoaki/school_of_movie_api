@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_29_144550) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_30_075209) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -54,6 +54,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_29_144550) do
   create_table "user_tags", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
     t.string "user_id", limit: 36, null: false
     t.text "tag", size: :tiny, null: false
+    t.datetime "created_at"
   end
 
   create_table "users", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
