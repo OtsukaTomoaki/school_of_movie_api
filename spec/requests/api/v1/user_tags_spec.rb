@@ -18,21 +18,26 @@ RSpec.describe "Api::V1::UserTags", type: :request, authentication: :skip  do
       {
         id: tag_1.id,
         user_id: tag_1.user_id,
-        tag: tag_1.tag
+        tag: tag_1.tag,
+        created_at: tag_1.created_at
       },
       {
         id: tag_2.id,
         user_id: tag_2.user_id,
-        tag: tag_2.tag
+        tag: tag_2.tag,
+        created_at: tag_2.created_at
       },
       {
         id: tag_3.id,
         user_id: tag_3.user_id,
-        tag: tag_3.tag
+        tag: tag_3.tag,
+        created_at: tag_3.created_at
       }
     ]
 
-    user_tags.sort_by! { |tag| tag[:id] }
+    user_tags.sort! { |a, b|
+      b[:created_at] <=> a[:created_at]
+    }
     {
       user_tags: user_tags
     }
