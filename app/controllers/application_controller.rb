@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   include SessionsHelper
+  include CookiesHelper
   include ActionController::Cookies
   include ActionController::RequestForgeryProtection
 
