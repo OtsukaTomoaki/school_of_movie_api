@@ -10,9 +10,9 @@ class SocialClientService
         email: profile['email'],
         name: profile['name']
       })
-      avator_image = fetch_google_accounts_picture(profile['picture'])
+      avatar_image = fetch_google_accounts_picture(profile['picture'])
 
-      user.avator_image.attach(io: avator_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpeg" )
+      user.avatar_image.attach(io: avatar_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpeg" )
 
       ActiveRecord::Base.transaction do
         user.save!(validate: false)
