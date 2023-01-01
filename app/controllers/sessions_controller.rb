@@ -21,6 +21,10 @@ class SessionsController < ApplicationController
         remember_token: user.remember_token
       }.to_json.to_s
 
+      add_authorization_cookie(
+        TokenService.issue_by_social_account(converted_param[:email], auth_hash_param.uid, :google)
+      )
+
       query = URI.encode_www_form(signin_state: Base64.encode64(signin_json_str))
       redirect_to ENV['ROOT_URL'] + "signin_with_token?#{query}"
     else
