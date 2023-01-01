@@ -9,7 +9,8 @@ class ApplicationController < ActionController::API
 
   def current_user
     begin
-      @current_user ||= TokenService.authorization(request.headers['Authorization'])
+      authorization_header = request.headers['Authorization'].present? ? request.headers['Authorization'] : request.cookies["authorization"]
+      @current_user ||= TokenService.authorization(authorization_header)
     rescue => e
       p request.headers, e
       false
