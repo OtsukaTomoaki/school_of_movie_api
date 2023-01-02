@@ -21,6 +21,18 @@ class Api::V1::UsersController < Api::V1::ApplicationController
     end
   end
 
+  def update
+    user = User.find_by_id(params[:id])
+    if user.update(user_update_params)
+      if avatar_image = avatar_image_params
+        user.avatar_image.attach(io: avatar_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpg" )
+      end
+      @user = user
+      @avatar_image_size = avatar_image ? avatar_image.length : 0
+      return
+    end
+  end
+
   def create_with_social_accounts
     onetime_token = params[:onetime_token]
     exchange_json = OneTimeToken.find_valid_token(onetime_token)
@@ -43,7 +55,11 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   private
     def user_params
-      user = params.require(:user).permit(:name, :email, :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    end
+
+    def user_update_params
+      params.require(:user).permit(:name)
     end
 
     def avatar_image_params
