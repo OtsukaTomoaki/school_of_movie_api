@@ -42,69 +42,50 @@ RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
       user
     }
 
-    context "プロフィール画像の更新を含まない場合" do
-      let!(:params) {
-        {
-          user: {
-            name: '更新テスト'
+    context "正常系" do
+      context "プロフィール画像の更新を含まない場合" do
+        let!(:params) {
+          {
+            user: {
+              name: '更新テスト'
+            }
           }
         }
-      }
-      let!(:avatar_image_sum) {
-        user.avatar_image.checksum
-      }
-      it "レスポンスが200になり、プロフィールも更新されること" do
-        subject
-        expect(response).to have_http_status 200
-        json = JSON.parse(response.body)
-        expect(json['name']).to eq params[:user][:name]
-        expect(user.avatar_image.checksum).to eq avatar_image_sum
+        let!(:avatar_image_sum) {
+          user.avatar_image.checksum
+        }
+        it "レスポンスが200になり、プロフィールも更新されること" do
+          subject
+          expect(response).to have_http_status 200
+          json = JSON.parse(response.body)
+          expect(json['name']).to eq params[:user][:name]
+          expect(user.avatar_image.checksum).to eq avatar_image_sum
+        end
       end
-    end
 
-    context "プロフィール画像の更新を含む場合" do
-      let!(:params) {
-        {
-          user: {
-            name: '更新テスト'
+      context "プロフィール画像の更新を含む場合" do
+        let!(:params) {
+          {
+            user: {
+              name: '更新テスト',
+              avatar_image: base64_avatar_image
+            }
           }
         }
-      }
-      let!(:download_avatar_image) {
-        user.avatar_image.download
-      }
-      it "レスポンスが200になり、プロフィールも更新されること" do
-        subject
-        expect(response).to have_http_status 200
-        json = JSON.parse(response.body)
-        expect(json['name']).to eq params[:user][:name]
-        updated_user = User.find_by_id(user.id)
-        expect(updated_user.avatar_image.download).to eq download_avatar_image
-      end
-    end
-
-    context "プロフィール画像の更新を含まない場合" do
-      let!(:params) {
-        {
-          user: {
-            name: '更新テスト',
-            avatar_image: base64_avatar_image
-          }
+        let!(:new_avatar_image) {
+          fixture_file_upload("images/sample_2.jpeg", 'image/jpeg').read
         }
-      }
-      let!(:new_avatar_image) {
-        fixture_file_upload("images/sample_2.jpeg", 'image/jpeg').read
-      }
-      let!(:base64_avatar_image) {
-        Base64.strict_encode64(new_avatar_image)
-      }
-      it "レスポンスが200になり、プロフィールも更新されること" do
-        subject
-        expect(response).to have_http_status 200
-        json = JSON.parse(response.body)
-        expect(json['name']).to eq params[:user][:name]
-        updated_user = User.find_by_id(user.id)
-        expect(updated_user.avatar_image.download).to eq new_avatar_image
+        let!(:base64_avatar_image) {
+          Base64.strict_encode64(new_avatar_image)
+        }
+        it "レスポンスが200になり、プロフィールも更新されること" do
+          subject
+          expect(response).to have_http_status 200
+          json = JSON.parse(response.body)
+          expect(json['name']).to eq params[:user][:name]
+          updated_user = User.find_by_id(user.id)
+          expect(updated_user.avatar_image.download).to eq new_avatar_image
+        end
       end
     end
   end
