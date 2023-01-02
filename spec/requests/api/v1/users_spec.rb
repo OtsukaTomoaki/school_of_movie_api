@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
+  extend ActiveSupport::Concern
   RSpec::Matchers.define_negated_matcher :not_change, :change
 
   let!(:avatar_image) {
@@ -13,6 +14,13 @@ RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
         email: "#{User.count}_bar@gmail.com",
         password: 'Bar1234')
     end
+  }
+  let!(:user) {
+    user = FactoryBot.create(:user,
+      name: 'FOO_BAR_テスト',
+      email: "foo_bar_baz@sample.com",
+      password: 'pass1234')
+    user
   }
 
   describe "/profile" do
@@ -33,13 +41,8 @@ RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
     subject {
       put "/api/v1/users/#{user.id}", params: params
     }
-    let!(:user) {
-      user = FactoryBot.create(:user,
-        name: 'FOO_BAR_テスト',
-        email: "foo_bar_baz@sample.com",
-        password: 'pass1234')
+    before {
       user.avatar_image.attach(io: avatar_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpg" )
-      user
     }
 
     context "正常系" do
@@ -86,6 +89,37 @@ RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
           updated_user = User.find_by_id(user.id)
           expect(updated_user.avatar_image.download).to eq new_avatar_image
         end
+      end
+    end
+  end
+
+  describe "/download_avatar_image" do
+    subject {
+      get "/api/v1/users/download_avatar_image"
+    }
+    context "アバターが設定されている場合" do
+      before {
+        user.avatar_image.attach(io: avatar_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpg" )
+      }
+      it "設定済みの画像がダウンロードできること" do
+        allow(TokenService).to receive(:authorization).and_return(user)
+        subject
+        expect(response).to have_http_status 200
+        expect(response.body.size).to eq avatar_image.size
+      end
+    end
+
+    context "アバターが設定されていない場合" do
+      let!(:default_avatar_image) {
+        File.open('app/assets/images/default_avatar_image.png') do |file|
+          file.read
+        end
+      }
+      it "未設定の場合の画像がダウンロードできること" do
+        allow(TokenService).to receive(:authorization).and_return(user)
+        subject
+        expect(response).to have_http_status 200
+        expect(response.body.size).to eq default_avatar_image.size
       end
     end
   end
