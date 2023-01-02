@@ -23,10 +23,11 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   def update
     user = User.find_by_id(params[:id])
-    if user.update(user_update_params)
-      if avatar_image = avatar_image_params
-        user.avatar_image.attach(io: avatar_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpg" )
-      end
+    user.update(user_update_params)
+    if avatar_image = avatar_image_params
+      user.avatar_image.attach(io: avatar_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpg" )
+    end
+    if user.save!
       @user = user
       @avatar_image_size = avatar_image ? avatar_image.length : 0
       return
