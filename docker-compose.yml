@@ -25,6 +25,8 @@ services:
       - db
     tty: true
     stdin_open: true
+    environment:
+      REDIS_URL: redis:6379
   minio:
     image: 'minio/minio'
     container_name: minio
@@ -38,6 +40,12 @@ services:
     ports:
         - '9000:9000'
         - '9001:9001'
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis/data:/export
 volumes:
   mysql_data:
   minio:
