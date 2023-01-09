@@ -16,16 +16,15 @@ class AuthenticationService
   end
 
   def self.authenticate_user_with_password!(email, password)
-    user = User.find_by(email: email)&.authenticate(password)
-    raise UnAuthorizationError if user.nil?
+    user = User.find_by(email: email)
+    raise UnAuthorizationError if user.nil? or !user.authenticate(password)
 
     user
   end
 
   def self.authenticate_user_with_remenber_token!(email, remember_token)
     user = User.find_by(email: email)
-
-    raise UnAuthorizationError unless user.authenticated? remember_token
+    raise UnAuthorizationError if user.nil? or !user.authenticated?(remember_token)
 
     user
   end
@@ -36,7 +35,7 @@ class AuthenticationService
                 social_account_id: social_account_id,
                 social_id: SocialAccountMapping.social_ids[social_type])
 
-    return if mapping.nil?
+    raise UnAuthorizationError  if mapping.nil?
 
     User.find_by(email: mapping.email)
   end
