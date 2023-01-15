@@ -28,7 +28,7 @@ Rails.application.configure do
 
   #   config.cache_store = :null_store
   # end
-  config.cache_store = :redis_store, "redis://redis:6379/0/cache"
+  config.cache_store = :redis_store, "redis://redis:6379/0/cache", { expires_in: 90.minutes }
   config.active_record.cache_versioning = false
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
