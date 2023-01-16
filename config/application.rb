@@ -27,6 +27,7 @@ module ProjectManageApi
     config.middleware.use ActionDispatch::Cookies # Required for all session management
     config.middleware.use ActionDispatch::Session::CookieStore,  domain: :all
     config.action_controller.forgery_protection_origin_check = false
+    config.action_cable.mount_path = "/cable"
 
   end
 end

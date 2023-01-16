@@ -3,6 +3,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "articles#index"
+  mount ActionCable.server => '/cable'
+  root to: 'rooms#show'
+
   get 'auth/:provider/callback', to: 'sessions#create'
   resources :sessions, only: %i[index new create destroy]
   namespace :api, {format: 'json'} do
