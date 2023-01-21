@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_one_attached :avatar_image
 
   has_many :user_tags, dependent: :destroy
+  has_many :talk_room_permissions, dependent: :destroy
 
   def User.search(id)
     find_by(id: id)
