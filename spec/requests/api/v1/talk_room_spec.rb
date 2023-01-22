@@ -189,4 +189,82 @@ RSpec.describe "Api::V1::TalkRooms", type: :request, authentication: :skip do
       end
     end
   end
+
+  describe 'destroy' do
+    let!(:talk_room_1) {
+      FactoryBot.create(:talk_room,
+        name: 'トークルームのタイトル_1',
+        describe: '未公開のトークルーム',
+        status: TalkRoom.statuses['draft']
+      )
+    }
+    let!(:talk_room_2) {
+      FactoryBot.create(:talk_room,
+        name: 'トークルームのタイトル_2',
+        describe: '限定公開のトークルーム',
+        status: TalkRoom.statuses['unlisted']
+      )
+    }
+
+    let!(:talk_room_3) {
+      FactoryBot.create(:talk_room,
+        name: 'トークルームのタイトル_3',
+        describe: '公開中のトークルーム_3',
+        status: TalkRoom.statuses['release']
+      )
+    }
+
+    let!(:talk_room_4) {
+      FactoryBot.create(:talk_room,
+        name: 'トークルームのタイトル_4',
+        describe: '公開中のトークルーム_4',
+        status: TalkRoom.statuses['release']
+      )
+    }
+    subject {
+      delete "/api/v1/talk_rooms/#{talk_room_id}"
+    }
+
+    context '正常系' do
+      let!(:talk_room_id) { talk_room_1.id }
+      context 'talk_roomの削除権限のみがある場合' do
+        before {
+          FactoryBot.create(:talk_room_permission,
+            talk_room_id: talk_room_1.id,
+            user_id: authenticated_user.id,
+            allow_delete: true,
+          )
+        }
+        it 'ステータスコードが200でレスポンスされ、talk_roomが1件減っていること' do
+          expect { subject }.to change { TalkRoom.count }.by(-1)
+          expect(response).to have_http_status 200
+          json = JSON.parse(response.body)
+          expect(json['id']).to eq talk_room_id
+
+          expect(TalkRoom.where(id: talk_room_1.id).count).to eq 0
+          expect(TalkRoomPermission.where(talk_room_id: talk_room_1.id).count).to eq 0
+        end
+      end
+      context 'talk_roomの全ての権限がある場合' do
+        before {
+          FactoryBot.create(:talk_room_permission,
+            talk_room_id: talk_room_1.id,
+            user_id: authenticated_user.id,
+            owner: true,
+            allow_edit: true,
+            allow_delete: true,
+          )
+        }
+        it 'ステータスコードが200でレスポンスされ、talk_roomが1件減っていること' do
+          expect { subject }.to change { TalkRoom.count }.by(-1)
+          expect(response).to have_http_status 200
+          json = JSON.parse(response.body)
+          expect(json['id']).to eq talk_room_id
+
+          expect(TalkRoom.where(id: talk_room_1.id).count).to eq 0
+          expect(TalkRoomPermission.where(talk_room_id: talk_room_1.id).count).to eq 0
+        end
+      end
+    end
+  end
 end
