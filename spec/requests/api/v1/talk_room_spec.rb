@@ -77,6 +77,148 @@ RSpec.describe "Api::V1::TalkRooms", type: :request, authentication: :skip do
     end
   end
 
+  describe 'show' do
+    let!(:talk_room_1) {
+      FactoryBot.create(:talk_room,
+        name: 'トークルームのタイトル_1',
+        describe: '未公開のトークルーム',
+        status: TalkRoom.statuses['draft']
+      )
+    }
+    let!(:talk_room_2) {
+      FactoryBot.create(:talk_room,
+        name: 'トークルームのタイトル_2',
+        describe: '限定公開のトークルーム',
+        status: TalkRoom.statuses['unlisted']
+      )
+    }
+
+    let!(:talk_room_3) {
+      FactoryBot.create(:talk_room,
+        name: 'トークルームのタイトル_3',
+        describe: '公開中のトークルーム_3',
+        status: TalkRoom.statuses['release']
+      )
+    }
+
+    subject {
+      get "/api/v1/talk_rooms/#{talk_room_id}"
+    }
+
+    context '正常系' do
+      context 'talk_room_permissionが存在しないtalk_roomの取得' do
+        context '限定状態のtalk_room' do
+          let!(:talk_room_id) { talk_room_2.id }
+          it 'ステータスコード200が返され、レスポンスbodyが正しいこと' do
+            subject
+            expect(response).to have_http_status 200
+            json = JSON.parse(response.body)
+            expect(json['id']).to eq talk_room_2.id
+            expect(json['name']).to eq talk_room_2.name
+            expect(json['describe']).to eq talk_room_2.describe
+            expect(json['status']).to eq 'unlisted'
+          end
+        end
+        context '公開状態のtalk_room' do
+          let!(:talk_room_id) { talk_room_3.id }
+          it 'ステータスコード200が返され、レスポンスbodyが正しいこと' do
+            subject
+            expect(response).to have_http_status 200
+            json = JSON.parse(response.body)
+            expect(json['id']).to eq talk_room_3.id
+            expect(json['name']).to eq talk_room_3.name
+            expect(json['describe']).to eq talk_room_3.describe
+            expect(json['status']).to eq 'release'
+          end
+        end
+      end
+
+      context 'talk_room_permissionが存在するtalk_roomの取得' do
+        before {
+          FactoryBot.create(:talk_room_permission,
+            talk_room_id: talk_room_1.id,
+            user_id: authenticated_user.id,
+            owner: true
+          )
+          FactoryBot.create(:talk_room_permission,
+            talk_room_id: talk_room_2.id,
+            user_id: authenticated_user.id,
+            owner: true
+          )
+          FactoryBot.create(:talk_room_permission,
+            talk_room_id: talk_room_3.id,
+            user_id: authenticated_user.id,
+            owner: true
+          )
+        }
+        context '下書き状態のtalk_room' do
+          let!(:talk_room_id) { talk_room_1.id }
+          it 'ステータスコード200が返され、レスポンスbodyが正しいこと' do
+            subject
+            expect(response).to have_http_status 200
+            json = JSON.parse(response.body)
+            expect(json['id']).to eq talk_room_1.id
+            expect(json['name']).to eq talk_room_1.name
+            expect(json['describe']).to eq talk_room_1.describe
+            expect(json['status']).to eq 'draft'
+          end
+        end
+        context '限定公開状態のtalk_room' do
+          let!(:talk_room_id) { talk_room_2.id }
+          it 'ステータスコード200が返され、レスポンスbodyが正しいこと' do
+            subject
+            expect(response).to have_http_status 200
+            json = JSON.parse(response.body)
+            expect(json['id']).to eq talk_room_2.id
+            expect(json['name']).to eq talk_room_2.name
+            expect(json['describe']).to eq talk_room_2.describe
+            expect(json['status']).to eq 'unlisted'
+          end
+        end
+        context '公開状態のtalk_room' do
+          let!(:talk_room_id) { talk_room_3.id }
+          it 'ステータスコード200が返され、レスポンスbodyが正しいこと' do
+            subject
+            expect(response).to have_http_status 200
+            json = JSON.parse(response.body)
+            expect(json['id']).to eq talk_room_3.id
+            expect(json['name']).to eq talk_room_3.name
+            expect(json['describe']).to eq talk_room_3.describe
+            expect(json['status']).to eq 'release'
+          end
+        end
+      end
+    end
+
+    context '異常系' do
+      context 'talk_room_permissionが存在しないtalk_roomの取得' do
+        context '下書き状態のtalk_room' do
+          let!(:talk_room_id) { talk_room_1.id }
+          it 'ステータスコード404が返されること' do
+            subject
+            expect(response).to have_http_status 404
+          end
+        end
+      end
+      context 'talk_room_permissionが存在するtalk_roomの取得' do
+        before {
+          FactoryBot.create(:talk_room_permission,
+            talk_room_id: talk_room_1.id,
+            user_id: authenticated_user.id,
+            owner: false
+          )
+        }
+        context '下書き状態かつowner権限のないtalk_roomの場合' do
+          let!(:talk_room_id) { talk_room_1.id }
+          it 'ステータスコード404が返されること' do
+            subject
+            expect(response).to have_http_status 404
+          end
+        end
+      end
+    end
+  end
+
   describe 'create' do
     let!(:params) {
       {
