@@ -22,8 +22,8 @@ class Api::V1::ApplicationController < ActionController::API
   end
 
   # 400 Bad Request
-  def response_bad_request(message: 'Bad Request')
-    render status: 400, json: { status: 400, message: message }
+  def response_bad_request(errors: [])
+    render status: 400, json: { status: 400, errors: errors }
   end
 
   # 401 Unauthorized
