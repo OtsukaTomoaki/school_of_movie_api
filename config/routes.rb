@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       resources :sessions
 
       resources :user_tags
+      resources :talk_rooms
     end
   end
 end
