@@ -130,6 +130,63 @@ RSpec.describe "Api::V1::TalkRooms", type: :request, authentication: :skip do
     end
 
     context '異常系' do
+      context 'nameが空の場合' do
+        let!(:name) {
+          ''
+        }
+        let!(:describe) {
+          'foo_bar_buz'
+        }
+        let!(:status) {
+          TalkRoom.statuses['release']
+        }
+        let!(:error_message) {
+          {
+            "status"=>400,
+            "errors"=>[
+              {
+                "attribute"=>"name",
+                "message"=>"Name can't be blank"
+              }
+            ]
+          }
+        }
+        it 'ステータスコード400が返されること' do
+          subject
+          expect(response).to have_http_status 400
+          json = JSON.parse(response.body)
+          expect(json).to eq error_message
+        end
+      end
+
+      context 'statusが空の場合' do
+        let!(:name) {
+          'name'
+        }
+        let!(:describe) {
+          'foo_bar_buz'
+        }
+        let!(:status) {
+          nil
+        }
+        let!(:error_message) {
+          {
+            "status"=>400,
+            "errors"=>[
+              {
+                "attribute"=>"status",
+                "message"=>"Status can't be blank"
+              }
+            ]
+          }
+        }
+        it 'ステータスコード400が返されること' do
+          subject
+          expect(response).to have_http_status 400
+          json = JSON.parse(response.body)
+          expect(json).to eq error_message
+        end
+      end
     end
   end
 end
