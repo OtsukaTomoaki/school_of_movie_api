@@ -15,4 +15,46 @@ class TalkRoomService
       talk_room
     end
   end
+
+  def update!(form:, user:)
+    if TalkRoomPermission.exists?(
+      talk_room_id: form.id,
+      user_id: user.id,
+      allow_edit: true
+    )
+      talk_room = TalkRoom.find_by_id(form.id)
+      talk_room.update!(form.attributes)
+
+      talk_room
+    else
+      @error_messages = [
+        '権限がありません'
+      ]
+      false
+    end
+  end
+
+  def destroy!(id:, user:)
+    if TalkRoomPermission.exists?(
+      talk_room_id: id,
+      user_id: user.id,
+      allow_delete: true
+    )
+      ActiveRecord::Base.transaction do
+        talk_room = TalkRoom.find_by_id(id)
+        TalkRoomPermission.where(talk_room_id: talk_room.id).destroy_all
+        talk_room.destroy!
+        talk_room
+      end
+    else
+      @error_messages = [
+        '権限がありません'
+      ]
+      false
+    end
+  end
+
+  def error_messages
+    @error_messages
+  end
 end
