@@ -3,6 +3,7 @@ class TalkRooms::Form
   include ActiveModel::Attributes
   include CustomException
 
+  attribute :id, :string
   attribute :name, :string
   attribute :describe, :string
   attribute :status, :integer

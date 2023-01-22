@@ -16,6 +16,24 @@ class TalkRoomService
     end
   end
 
+  def update!(form:, user:)
+    if TalkRoomPermission.exists?(
+      talk_room_id: form.id,
+      user_id: user.id,
+      allow_delete: true
+    )
+      talk_room = TalkRoom.find_by_id(form.id)
+      talk_room.update!(form.attributes)
+
+      talk_room
+    else
+      @error_messages = [
+        '権限がありません'
+      ]
+      false
+    end
+  end
+
   def destroy!(id:, user:)
     if TalkRoomPermission.exists?(
       talk_room_id: id,
@@ -32,7 +50,7 @@ class TalkRoomService
       @error_messages = [
         '権限がありません'
       ]
-      return false
+      false
     end
   end
 
