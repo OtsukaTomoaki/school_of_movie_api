@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::TalkRooms", type: :request, authentication: :skip do
+  RSpec::Matchers.define_negated_matcher :not_change, :change
+
   describe 'index' do
     before {
       FactoryBot.create(:talk_room,
@@ -263,6 +265,25 @@ RSpec.describe "Api::V1::TalkRooms", type: :request, authentication: :skip do
 
           expect(TalkRoom.where(id: talk_room_1.id).count).to eq 0
           expect(TalkRoomPermission.where(talk_room_id: talk_room_1.id).count).to eq 0
+        end
+      end
+    end
+
+    context '異常系' do
+      let!(:talk_room_id) { talk_room_1.id }
+      context 'talk_roomの削除権限がない場合' do
+        before {
+          FactoryBot.create(:talk_room_permission,
+            talk_room_id: talk_room_1.id,
+            user_id: authenticated_user.id,
+            allow_delete: false,
+          )
+        }
+        it 'ステータスコードが400でレスポンスされ、talk_roomが1件減っていること' do
+          expect { subject }.to not_change { TalkRoom.count }
+          expect(response).to have_http_status 400
+          json = JSON.parse(response.body)
+          expect(json['errors']).to eq ['権限がありません']
         end
       end
     end

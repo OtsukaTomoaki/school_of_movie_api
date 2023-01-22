@@ -27,9 +27,10 @@ class Api::V1::TalkRoomsController < Api::V1::ApplicationController
 
   def destroy
     @id = params[:id]
-    ActiveRecord::Base.transaction do
-      TalkRoomPermission.where(talk_room_id: @id).destroy_all
-      TalkRoom.find_by_id(@id).destroy!
+    talk_room_service = TalkRoomService.new
+    result = talk_room_service.destroy!(id: @id, user: current_user)
+    if !result
+      response_bad_request(errors: talk_room_service.error_messages)
     end
   end
 
