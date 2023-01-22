@@ -192,6 +192,177 @@ RSpec.describe "Api::V1::TalkRooms", type: :request, authentication: :skip do
     end
   end
 
+  describe 'update' do
+    let!(:talk_room_1) {
+      FactoryBot.create(:talk_room,
+        name: 'トークルームのタイトル_1',
+        describe: '未公開のトークルーム',
+        status: TalkRoom.statuses['draft']
+      )
+    }
+    let!(:params) {
+      {
+        talk_room: {
+          name: name,
+          describe: describe,
+          status: status,
+        }
+      }
+    }
+    subject {
+      put "/api/v1/talk_rooms/#{talk_room_1.id}", params: params, as: :json
+    }
+    context '正常系' do
+      let!(:talk_room_permission_1) {
+        FactoryBot.create(:talk_room_permission,
+          talk_room_id: talk_room_1.id,
+          user_id: authenticated_user.id,
+          allow_edit: true,
+        )
+      }
+      context 'name, describe, statusが指定されている場合' do
+        let!(:name) {
+          'foo'
+        }
+        let!(:describe) {
+          'foo_bar_buz'
+        }
+        let!(:status) {
+          TalkRoom.statuses['release']
+        }
+        it 'ステータスコード200が返されること' do
+          subject
+          expect(response).to have_http_status 200
+          json = JSON.parse(response.body)
+          expect(json['name']).to eq name
+          expect(json['describe']).to eq describe
+          expect(json['status']).to eq 'release'
+        end
+      end
+      context 'describeが空の場合' do
+        let!(:name) {
+          'foo'
+        }
+        let!(:describe) {
+          ''
+        }
+        let!(:status) {
+          TalkRoom.statuses['release']
+        }
+        it 'ステータスコード200が返されること' do
+          subject
+          expect(response).to have_http_status 200
+          json = JSON.parse(response.body)
+          expect(json['name']).to eq name
+          expect(json['describe']).to eq describe
+          expect(json['status']).to eq 'release'
+        end
+      end
+    end
+
+    context '異常系' do
+      let!(:name) {
+        'foo'
+      }
+      let!(:describe) {
+        'foo_bar_buz'
+      }
+      let!(:status) {
+        TalkRoom.statuses['release']
+      }
+      context '変更権限がない場合' do
+        context 'talk_room_permissionにレコードが存在し、所有者かつ、削除許可の権限がある' do
+          let!(:talk_room_permission_1) {
+            FactoryBot.create(:talk_room_permission,
+              talk_room_id: talk_room_1.id,
+              user_id: authenticated_user.id,
+              owner: owner,
+              allow_edit: allow_edit,
+              allow_delete: allow_delete
+            )
+          }
+          let!(:owner) { true }
+          let!(:allow_edit) { false }
+          let!(:allow_delete) { true }
+          it 'ステータスコード400が返されること' do
+            subject
+            expect(response).to have_http_status 400
+            json = JSON.parse(response.body)
+            expect(json['errors']).to eq ['権限がありません']
+          end
+        end
+
+        context 'talk_room_permissionにレコードが存在しない場合' do
+          it 'ステータスコード400が返されること' do
+            subject
+            expect(response).to have_http_status 400
+            json = JSON.parse(response.body)
+            expect(json['errors']).to eq ['権限がありません']
+          end
+        end
+      end
+      context '不正なbodyが含まれている場合' do
+        context 'nameが空の場合' do
+          let!(:name) {
+            ''
+          }
+          let!(:describe) {
+            'foo_bar_buz'
+          }
+          let!(:status) {
+            TalkRoom.statuses['release']
+          }
+          let!(:error_message) {
+            {
+              "status"=>400,
+              "errors"=>[
+                {
+                  "attribute"=>"name",
+                  "message"=>"Name can't be blank"
+                }
+              ]
+            }
+          }
+          it 'ステータスコード400が返されること' do
+            subject
+            expect(response).to have_http_status 400
+            json = JSON.parse(response.body)
+            expect(json).to eq error_message
+          end
+        end
+
+        context 'statusが空の場合' do
+          let!(:name) {
+            'name'
+          }
+          let!(:describe) {
+            'foo_bar_buz'
+          }
+          let!(:status) {
+            nil
+          }
+          let!(:error_message) {
+            {
+              "status"=>400,
+              "errors"=>[
+                {
+                  "attribute"=>"status",
+                  "message"=>"Status can't be blank"
+                }
+              ]
+            }
+          }
+          it 'ステータスコード400が返されること' do
+            subject
+            expect(response).to have_http_status 400
+            json = JSON.parse(response.body)
+            expect(json).to eq error_message
+          end
+        end
+      end
+    end
+  end
+
   describe 'destroy' do
     let!(:talk_room_1) {
       FactoryBot.create(:talk_room,

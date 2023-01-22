@@ -20,7 +20,7 @@ class TalkRoomService
     if TalkRoomPermission.exists?(
       talk_room_id: form.id,
       user_id: user.id,
-      allow_delete: true
+      allow_edit: true
     )
       talk_room = TalkRoom.find_by_id(form.id)
       talk_room.update!(form.attributes)
