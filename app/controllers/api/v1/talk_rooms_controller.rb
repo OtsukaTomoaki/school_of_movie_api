@@ -1,4 +1,4 @@
-class Api::V1::TalkRoomsController < ApplicationController
+class Api::V1::TalkRoomsController < Api::V1::ApplicationController
   def index
     @talk_rooms = TalkRoom
                     .left_joins(:talk_room_permissions)
@@ -8,7 +8,12 @@ class Api::V1::TalkRoomsController < ApplicationController
   end
 
   def create
-    @talk_room = TalkRoomService.new.create!(form: talk_room_params, owner_user: current_user)
+    @form = TalkRooms::Form.new(talk_room_params)
+    if @form.valid?
+      @talk_room = TalkRoomService.new.create!(form: @form, owner_user: current_user)
+    else
+      response_bad_request(errors: @form.error_messages)
+    end
   end
 
   private

@@ -3,7 +3,7 @@ class TalkRoomService
 
   def create!(form:, owner_user:)
     ActiveRecord::Base.transaction do
-      talk_room = TalkRoom.create!(form)
+      talk_room = TalkRoom.create!(form.attributes)
 
       TalkRoomPermission.create!(
         talk_room_id: talk_room.id,
