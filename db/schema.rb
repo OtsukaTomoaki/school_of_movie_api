@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_21_075345) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_22_171920) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -37,6 +37,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_21_075345) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "messages", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
+    t.string "talk_room_id", limit: 36, null: false
+    t.string "user_id", limit: 36, null: false
+    t.text "content", comment: "メッセージ内容"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["talk_room_id"], name: "index_messages_on_talk_room_id"
   end
 
   create_table "one_time_tokens", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
