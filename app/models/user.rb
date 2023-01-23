@@ -13,6 +13,7 @@ class User < ApplicationRecord
 
   has_many :user_tags, dependent: :destroy
   has_many :talk_room_permissions, dependent: :destroy
+  has_many :message
 
   def User.search(id)
     find_by(id: id)
