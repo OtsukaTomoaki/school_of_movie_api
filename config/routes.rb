@@ -20,6 +20,7 @@ Rails.application.routes.draw do
 
       resources :user_tags
       resources :talk_rooms
+      resources :messages
     end
   end
 end
