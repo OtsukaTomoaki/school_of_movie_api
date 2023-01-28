@@ -9,17 +9,7 @@ class Api::V1::TalkRoomsController < Api::V1::ApplicationController
 
   def show
     id = params[:id]
-    @talk_room = TalkRoom.left_joins(:talk_room_permissions)
-                  .where(id: id)
-                  .merge(
-                    TalkRoom.left_joins(:talk_room_permissions)
-                      .where.not(status: TalkRoom.statuses['draft'])
-                      .or(TalkRoomPermission.where(
-                        user_id: current_user.id,
-                        owner: true
-                        )
-                      )
-                  ).first
+    @talk_room = TalkRoom.get(id: id, user: current_user)
 
     if @talk_room.nil?
       return response_not_found
