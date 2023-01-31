@@ -7,15 +7,16 @@ RSpec.describe RoomChannel, authentication: :skip, type: :channel do
 
   describe "メッセージの送信" do
     let!(:speak_message) { 'サンプル_Sample' }
-    let!(:channel_name) { 'room_channel' }
+    let!(:channel_name) { "room_channel_#{room_channel_id}" }
+    let!(:room_channel_id) { 1234 }
 
     it "チェンネルの接続ができること" do
-      subscribe
+      subscribe id: room_channel_id
       expect(subscription).to be_confirmed
     end
 
     it "メッセージを送信するとブロードキャストされたデータに含まれていること" do
-      subscribe
+      subscribe id: room_channel_id
       expect(subscription).to be_confirmed
       expect do
         perform :speak, message: speak_message
