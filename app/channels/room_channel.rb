@@ -16,12 +16,7 @@ class RoomChannel < ApplicationCable::Channel
     )
     if message.valid?
       message.save!
-      broadcast_message = message.attributes
-      broadcast_message['user'] = {
-        id: current_user.id,
-        name: current_user.name,
-      }
-      ActionCable.server.broadcast("room_channel_#{params[:id]}", {message: broadcast_message})
+      ActionCable.server.broadcast("room_channel_#{params[:id]}", {message: message})
     end
   end
 
