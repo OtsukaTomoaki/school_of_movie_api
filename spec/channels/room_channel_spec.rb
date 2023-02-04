@@ -37,7 +37,8 @@ RSpec.describe RoomChannel, authentication: :skip, type: :channel do
         response_message = data['message']
         expect(response_message['id']).to eq expect_message.id
         expect(response_message['talk_room_id']).to eq expect_message.talk_room_id
-        expect(response_message['user_id']).to eq expect_message.user_id
+        expect(response_message['user']['id']).to eq authenticated_user.id
+        expect(response_message['user']['name']).to eq authenticated_user.name
         expect(response_message['content']).to eq expect_message.content
         expect(response_message['created_at']).to eq expect_message.created_at.iso8601(3)
       }
