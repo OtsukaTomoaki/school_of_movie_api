@@ -49,7 +49,8 @@ RSpec.describe "Api::V1::Messages", type: :request, authentication: :skip do
 
           last_message = json['messages'].last
           expect(last_message['talk_room_id']).to eq talk_room_id
-          expect(last_message['user_id']).to eq message_user_id
+          expect(last_message['user']['id']).to eq message_user.id
+          expect(last_message['user']['name']).to eq message_user.name
           expect(last_message['content']).to eq message_content
       end
     end
@@ -72,7 +73,7 @@ RSpec.describe "Api::V1::Messages", type: :request, authentication: :skip do
             owner: true,
           )
         }
-        let!(:message_user_id) { user_3.id }
+        let!(:message_user) { user_3 }
         let!(:message_content) { 'さしすせそ' }
         let!(:message_ids_on_db) {
           Message.where(talk_room_id: talk_room_id).order(:created_at).pluck(:id)
@@ -89,7 +90,7 @@ RSpec.describe "Api::V1::Messages", type: :request, authentication: :skip do
       let!(:talk_room_id) { talk_room_unlisted.id }
       let!(:another_talk_room_id_1) { talk_room_draft.id }
       let!(:another_talk_room_id_2) { talk_room_release.id }
-      let!(:message_user_id) { user_3.id }
+      let!(:message_user) { user_3 }
       let!(:message_content) { 'さしすせそ' }
       let!(:message_ids_on_db) {
         Message.where(talk_room_id: talk_room_id).order(:created_at).pluck(:id)
@@ -114,7 +115,7 @@ RSpec.describe "Api::V1::Messages", type: :request, authentication: :skip do
       let!(:talk_room_id) { talk_room_release.id }
       let!(:another_talk_room_id_1) { talk_room_draft.id }
       let!(:another_talk_room_id_2) { talk_room_unlisted.id }
-      let!(:message_user_id) { user_3.id }
+      let!(:message_user) { user_3 }
       let!(:message_content) { 'さしすせそ' }
       let!(:message_ids_on_db) {
         Message.where(talk_room_id: talk_room_id).order(:created_at).pluck(:id)
