@@ -73,6 +73,8 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-byebug'
   gem 'rspec-rails'
+  gem 'rubocop', require: false
+  gem 'solargraph', require: false
 end
 
 group :development do
