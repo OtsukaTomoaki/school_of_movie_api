@@ -5,6 +5,8 @@ RUN apt-get update -qq && apt-get install -y libxslt-dev liblzma-dev patch build
 RUN mkdir /funny_cats_api
 
 RUN gem install nokogiri --platform=ruby
+RUN gem install solargraph
+
 RUN bundle config set force_ruby_platform true
 
 WORKDIR /funny_cats_api
