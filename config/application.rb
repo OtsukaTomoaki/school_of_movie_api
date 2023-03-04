@@ -28,6 +28,8 @@ module ProjectManageApi
     config.middleware.use ActionDispatch::Session::CookieStore,  domain: :all
     config.action_controller.forgery_protection_origin_check = false
     config.action_cable.mount_path = "/cable"
-
+    # config.autoload_paths += %W(#{config.root}/app)
+    config.autoload_paths += %W(#{config.root}/app/batch/**/)
+    config.eager_load_paths += %W(#{config.root}/app/batch/**/})
   end
 end

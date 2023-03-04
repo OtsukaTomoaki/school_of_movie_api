@@ -6,13 +6,17 @@
 # Example:
 #
 # set :output, "/path/to/my/cron_log.log"
-#
-# every 2.hours do
-#   command "/usr/bin/some_great_command"
-#   runner "MyModel.some_method"
-#   rake "some:great:rake:task"
-# end
-#
+
+set :output, error: './log/crontab_error.log', standard: './log/crontab.log'
+# TODO: 環境ごとの分岐をかく
+set :environment, :development
+
+ENV.each { |k, v| env(k, v) } # これを追加
+
+every 10.minute do
+  rake "messages:say"
+end
+
 # every 4.days do
 #   runner "AnotherModel.prune_old_records"
 # end
