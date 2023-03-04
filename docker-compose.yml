@@ -14,11 +14,12 @@ services:
       - mysql_data:/var/lib/mysql
   web:
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec solargraph socket --host=0.0.0.0 --port=7658 && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
       - .:/funny_cats_api/
     ports:
       - 3000:3000
+      - 8091:7658
     links:
       - db
     depends_on:
