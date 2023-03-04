@@ -8,8 +8,14 @@
 # set :output, "/path/to/my/cron_log.log"
 
 set :output, error: './log/crontab_error.log', standard: './log/crontab.log'
-# TODO: 環境ごとの分岐をかく
-set :environment, :development
+
+if Rails.env.test?
+  set :environment, :test
+elsif Rails.env.production?
+  set :environment, :production
+else
+  set :environment, :development
+end
 
 ENV.each { |k, v| env(k, v) } # これを追加
 
