@@ -1,0 +1,2 @@
+module Batch::Analysis
+end
