@@ -53,7 +53,9 @@ jobs:
 
       - name: Bundler and gem install
         run: |
+          apt-get update -qq && apt-get install -y cron libmecab2 libmecab-dev mecab mecab-ipadic mecab-ipadic-utf8 mecab-utils
           gem install bundler
+          gem install mecab natto
           bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Setup test data
