@@ -1,7 +1,9 @@
 namespace :messages do
-  desc "Helloを表示するタスク"
+  require_relative '../../app/batch/analysis/messages'
+
+  desc 'Helloを表示するタスク'
   task say: :environment do
-    logger = Logger.new(Rails.root.join('log', 'cron.log'))
-    logger.info "cron job started at #{Time.now}!!!!"
+    message_analysis = Messages.new
+    message_analysis.execute
   end
 end
