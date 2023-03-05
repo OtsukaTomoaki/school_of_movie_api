@@ -130,6 +130,7 @@ GEM
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
+    ffi (1.15.5)
     globalid (1.1.0)
       activesupport (>= 5.0)
     hashie (5.0.0)
@@ -167,6 +168,8 @@ GEM
     msgpack (1.6.0)
     multi_xml (0.6.0)
     mysql2 (0.5.5)
+    natto (1.2.0)
+      ffi (>= 1.9.0)
     net-imap (0.3.4)
       date
       net-protocol
@@ -364,6 +367,7 @@ DEPENDENCIES
   json
   jwt
   mysql2 (~> 0.5)
+  natto
   omniauth
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
