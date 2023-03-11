@@ -53,13 +53,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_090544) do
     t.text "title", null: false, comment: "タイトル"
     t.text "original_title", null: false, comment: "原題"
     t.text "overview", null: false, comment: "概要"
-    t.string "poster_path", null: false, comment: "ポスター画像パス"
-    t.string "backdrop_path", null: false, comment: "背景画像パス"
+    t.string "poster_path", comment: "ポスター画像パス"
+    t.string "backdrop_path", comment: "背景画像パス"
     t.string "original_language", limit: 10, null: false, comment: "言語"
     t.boolean "adult", null: false, comment: "成人向け"
     t.decimal "vote_average", precision: 10, comment: "平均評価"
     t.integer "vote_count", comment: "評価数"
-    t.datetime "release_date", null: false, comment: "公開日"
+    t.datetime "release_date", comment: "公開日"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["the_movie_database_id"], name: "index_movies_on_the_movie_database_id", unique: true
