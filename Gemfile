@@ -68,6 +68,10 @@ gem 'whenever', require: false
 
 gem 'natto'
 
+gem 'rest-client'
+
+gem 'activerecord-import'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
@@ -89,7 +93,8 @@ end
 group :test do
   gem 'capybara'
   gem 'rspec-rails'
-  gem "factory_bot_rails"
+  gem 'factory_bot_rails'
   gem 'faker'
   gem 'action-cable-testing'
+  gem 'webmock'
 end
