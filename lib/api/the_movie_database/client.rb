@@ -36,8 +36,15 @@ module Api
             p url
             response = RestClient.get(url)
             break if response.code == 200
-          rescue RestClient::Exception => e
-            Rails.logger.error("Error occurred during request: #{e} #{response.code} #{response.body}")
+          rescue RestClient::ExceptionWithResponse => e
+            status_code = e.response.code.to_i
+            body = e.response.body
+            if (500..599).include?(status_code)
+              puts "Server error #{e.response.body}"
+            else
+              Rails.logger.error("Error occurred during request: #{status_code} body: #{body}")
+              return
+            end
           end
 
           if retry_count == MAX_RETRY_COUNT - 1
