@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_11_090544) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_12_091711) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -57,7 +57,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_090544) do
     t.string "backdrop_path", comment: "背景画像パス"
     t.string "original_language", limit: 10, null: false, comment: "言語"
     t.boolean "adult", null: false, comment: "成人向け"
-    t.decimal "vote_average", precision: 10, comment: "平均評価"
+    t.decimal "vote_average", precision: 11, scale: 8, comment: "平均評価"
     t.integer "vote_count", comment: "評価数"
     t.datetime "release_date", comment: "公開日"
     t.datetime "created_at", null: false
