@@ -56,6 +56,8 @@ GEM
     activerecord (7.0.4.2)
       activemodel (= 7.0.4.2)
       activesupport (= 7.0.4.2)
+    activerecord-import (1.4.1)
+      activerecord (>= 4.2)
     activestorage (7.0.4.2)
       actionpack (= 7.0.4.2)
       activejob (= 7.0.4.2)
@@ -369,6 +371,7 @@ PLATFORMS
 
 DEPENDENCIES
   action-cable-testing
+  activerecord-import
   aws-sdk-s3
   base64
   bcrypt
