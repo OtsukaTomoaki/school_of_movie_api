@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_12_091711) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_18_064148) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -46,6 +46,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_12_091711) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["talk_room_id"], name: "index_messages_on_talk_room_id"
+  end
+
+  create_table "movie_genre_relations", id: false, charset: "utf8mb4", force: :cascade do |t|
+    t.string "movie_id", limit: 36, null: false, comment: "映画ID"
+    t.string "movie_genre_id", limit: 36, null: false, comment: "映画ジャンルID"
+    t.index ["movie_id", "movie_genre_id"], name: "index_movie_genre_relations_on_movie_id_and_movie_genre_id", unique: true
+  end
+
+  create_table "movie_genres", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
+    t.string "the_movie_database_id", limit: 36, null: false, comment: "tmdbで管理されているid"
+    t.string "name", limit: 100, null: false, comment: "ジャンル名"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["the_movie_database_id"], name: "index_movie_genres_on_the_movie_database_id", unique: true
   end
 
   create_table "movies", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
