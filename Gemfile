@@ -97,4 +97,5 @@ group :test do
   gem 'faker'
   gem 'action-cable-testing'
   gem 'webmock'
+  gem 'shoulda-matchers'
 end
