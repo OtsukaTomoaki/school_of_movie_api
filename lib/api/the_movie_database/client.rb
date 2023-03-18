@@ -18,8 +18,9 @@ module Api
           language: language,
           page: page,
         }
-        response = get(path: '/movie/popular', params: params)
-        response
+        url = "#{BASE_URL}/movie/popular"
+
+        get(url: url, params: params)
       end
 
       private
@@ -27,8 +28,8 @@ module Api
       MAX_RETRY_COUNT = 3
       RETRY_SLEEP_SECONDS = 5
 
-      def get(path:, params:)
-        url = "#{BASE_URL}#{path}" + '?' + URI.encode_www_form(params)
+      def get(url:, params:)
+        url = "#{url}?#{URI.encode_www_form(params)}"
 
         response = nil
         MAX_RETRY_COUNT.times do |retry_count|
