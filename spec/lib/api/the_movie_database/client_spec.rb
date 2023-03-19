@@ -63,7 +63,12 @@ RSpec.describe Api::TheMovieDatabase::Client do
           ]
         }
       end
+      before do
+        stub_request(:get, dummy_url)
+          .to_return(status: 200, body: response_body.to_json, headers: { 'Content-Type' => 'application/json' })
+      end
       subject { client.fetch_popular_list }
+      let!(:excepted_body) { JSON.parse(response_body.to_json) }
       it '人気の映画一覧が取得できる' do
         expect(subject).to eq(excepted_body)
       end
@@ -94,5 +99,6 @@ RSpec.describe Api::TheMovieDatabase::Client do
   end
 
   describe '#fetch_movie_genre' do
+
   end
 end
