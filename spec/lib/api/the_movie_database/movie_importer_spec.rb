@@ -1,8 +1,8 @@
 require 'rails_helper'
 require 'webmock/rspec'
-require_relative "#{Rails.root}/lib/api/the_movie_database/response_importer"
+require_relative "#{Rails.root}/lib/api/the_movie_database/movie_importer"
 
-RSpec.describe Api::TheMovieDatabase::ResponseImporter do
+RSpec.describe Api::TheMovieDatabase::MovieImporter do
 
   RSpec::Matchers.define_negated_matcher :not_change, :change
 
@@ -67,7 +67,7 @@ RSpec.describe Api::TheMovieDatabase::ResponseImporter do
   }
 
   describe '#initialize' do
-    subject { Api::TheMovieDatabase::ResponseImporter.new(params: params) }
+    subject { described_class.new(params: params) }
 
     let!(:params) {
       results = {
@@ -84,7 +84,7 @@ RSpec.describe Api::TheMovieDatabase::ResponseImporter do
   end
 
   describe '#execute!' do
-    let!(:importer) { Api::TheMovieDatabase::ResponseImporter.new(params: params) }
+    let!(:importer) { described_class.new(params: params) }
 
     let!(:params) {
       results = {

@@ -1,7 +1,7 @@
 module Api
   module TheMovieDatabase
     # require_relative "#{Rails.root}/app/models/movie"
-    class ResponseImporter
+    class MovieImporter
       include ActiveModel::Model
       include ActiveModel::Attributes
 
