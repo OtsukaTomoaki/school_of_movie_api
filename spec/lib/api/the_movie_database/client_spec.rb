@@ -99,6 +99,54 @@ RSpec.describe Api::TheMovieDatabase::Client do
   end
 
   describe '#fetch_movie_genre' do
+    let!(:dummy_url) { 'https://test.org/3/genre/movie/list?api_key=dummy_api_key&language=ja' }
+    context 'ステータスコード: 200がレスポンスされる場合' do
+      let(:response_body) do
+        {
+          genres: [
+            {
+              id: 1,
+              title: 'アクション'
+            },
+            {
+              id: 2,
+              title: 'アニメーション'
+            }
+          ]
+        }
+      end
+      before do
+        stub_request(:get, dummy_url)
+          .to_return(status: 200, body: response_body.to_json, headers: { 'Content-Type' => 'application/json' })
+      end
+      subject { client.fetch_movie_genres }
+      let!(:excepted_body) { JSON.parse(response_body.to_json) }
+      it '映画のジャンル一覧が取得できる' do
+        expect(subject).to eq(excepted_body)
+      end
+    end
 
+    describe 'リトライ処理の検証' do
+      let!(:response_body_when_success) do
+        {
+          genres: [
+            {
+              id: 2,
+              title: 'アニメーション'
+            }
+          ]
+        }
+      end
+      let(:response_body_when_failed) do
+        {
+          errors: [
+              "page must be less than or equal to 500"
+          ],
+          success: false
+        }
+      end
+      subject { client.fetch_movie_genres }
+      it_behaves_like 'リトライ処理が正しいこと'
+    end
   end
 end

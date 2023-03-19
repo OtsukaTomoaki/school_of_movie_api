@@ -23,6 +23,15 @@ module Api
 
         get(url: url, params: params)
       end
+
+      def fetch_movie_genres(language: 'ja')
+        params = {
+          api_key: API_KEY,
+          language: language
+        }
+        url = "#{BASE_URL}/genre/movie/list"
+        get(url: url, params: params)
+      end
     end
   end
 end
