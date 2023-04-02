@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'webmock/rspec'
 require_relative "#{Rails.root}/lib/api/the_movie_database/movie_importer"
 
 RSpec.describe Api::TheMovieDatabase::MovieImporter do
@@ -70,10 +69,7 @@ RSpec.describe Api::TheMovieDatabase::MovieImporter do
     subject { described_class.new(params: params) }
 
     let!(:params) {
-      results = {
-        results: responsed_movies
-      }
-      JSON.parse(results.to_json)
+      JSON.parse(responsed_movies.to_json)
     }
     example 'Movieが追加されないこと' do
       expect { subject }.not_to change { Movie.count }
@@ -87,10 +83,7 @@ RSpec.describe Api::TheMovieDatabase::MovieImporter do
     let!(:importer) { described_class.new(params: params) }
 
     let!(:params) {
-      results = {
-        results: responsed_movies
-      }
-      JSON.parse(results.to_json)
+      JSON.parse(responsed_movies.to_json)
     }
     subject { importer.execute! }
     context 'importする映画情報が既存のテーブルに存在しない場合' do

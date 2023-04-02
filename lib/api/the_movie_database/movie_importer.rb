@@ -6,7 +6,6 @@ module Api
       include ActiveModel::Attributes
 
       attribute :movies
-      attribute :movie_genre_relations
 
       ON_DUPLICATE_UPDATE_FOR_MOVIE = [
         :the_movie_database_id,
@@ -22,36 +21,24 @@ module Api
         :vote_count
       ].freeze
 
-      ON_DUPLICATE_UPDATE_FOR_MOVIE_GENRE_RELATIONS = [
-        :movie_id,
-        :movie_genre_id
-      ].freeze
-
       def initialize(params:)
-        movie_json_array = params['results']
-        movies = []
-        movie_genre_relations = []
-        movie_json_array.each do |movie_hash|
-          movie = MovieImporter.convert_movie_record_from_json(movie_hash)
-          movies << movie
-          if movie_genre_relations_by_movie = MovieImporter.convert_movie_genre_relations_record_from_json(movie, movie_hash['genre_ids'])
-            movie_genre_relations.concat(
-              movie_genre_relations_by_movie
-            )
-          end
+        tmp_movies = params.map do |movie_hash|
+          MovieImporter.convert_movie_record_from_json(movie_hash)
         end
         super(
           {
-            movies: movies,
-            movie_genre_relations: movie_genre_relations
+            movies: tmp_movies,
           }
         )
       end
 
       def execute!
         ActiveRecord::Base.transaction do
-          Movie.import self.movies, on_duplicate_key_update: ON_DUPLICATE_UPDATE_FOR_MOVIE
-          MovieGenreRelation.import self.movie_genre_relations, on_duplicate_key_update: ON_DUPLICATE_UPDATE_FOR_MOVIE_GENRE_RELATIONS
+          Movie.import(
+            self.movies,
+            on_duplicate_key_update: ON_DUPLICATE_UPDATE_FOR_MOVIE,
+            returning: [:id, :the_movie_database_id]
+          )
         end
       end
 
@@ -72,15 +59,6 @@ module Api
           vote_average: movie_in_json['vote_average'],
           vote_count: movie_in_json['vote_count']
         )
-      end
-
-      def self.convert_movie_genre_relations_record_from_json(movie, movie_genre_ids)
-        movie_genre_ids&.map do |movie_genre_id|
-          MovieGenreRelation.new(
-            movie: movie,
-            movie_genre_id: movie_genre_id
-          )
-        end
       end
     end
   end
