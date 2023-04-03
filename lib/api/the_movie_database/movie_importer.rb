@@ -33,6 +33,7 @@ module Api
       end
 
       def execute!
+        results = nil
         ActiveRecord::Base.transaction do
           Movie.import(
             self.movies,
@@ -40,6 +41,9 @@ module Api
             returning: [:id, :the_movie_database_id]
           )
         end
+        self.movies.pluck(:id, :the_movie_database_id).map { |row|
+          { id: row[0], the_movie_database_id: row[1] }
+        }
       end
 
       private
