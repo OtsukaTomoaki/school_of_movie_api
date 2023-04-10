@@ -41,7 +41,7 @@ module Api
             returning: [:id, :the_movie_database_id]
           )
         end
-        self.movies.pluck(:id, :the_movie_database_id).map { |row|
+        Movie.where(the_movie_database_id: self.movies.pluck(:the_movie_database_id)).pluck(:id, :the_movie_database_id).map { |row|
           { id: row[0], the_movie_database_id: row[1] }
         }
       end
