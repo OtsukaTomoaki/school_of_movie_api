@@ -1,6 +1,6 @@
 namespace :movies do
   require_relative '../api/the_movie_database/client'
-  require_relative '../api/the_movie_database/movie_importer'
+  require_relative '../api/the_movie_database/importer'
   require_relative '../api/the_movie_database/movie_genre_importer'
 
   desc 'Update movies from TMDB API'
@@ -13,7 +13,7 @@ namespace :movies do
     ENV['THE_MOVIE_DATABASE_REQUEST_MAX_TIMES'].to_i.times do |index|
       page = index + 1
       response = movie_client.fetch_popular_list(page: page)
-      importer = Api::TheMovieDatabase::MovieImporter.new(params: response)
+      importer = Api::TheMovieDatabase::Importer.new(params: response)
       importer.execute!
 
       break if response['total_pages'] <= page
