@@ -13,10 +13,41 @@ RSpec.describe Api::TheMovieDatabase::Client do
     Api::TheMovieDatabase::Client::API_KEY = ENV['THE_MOVIE_DATABASE_API_KEY']
   end
 
-  describe '#fetch_popular_list' do
+  shared_context 'リトライ処理が正しいこと' do
+    context '2回のリクエストで503, 3回目のリクエストで200がレスポンスされる場合' do
+      before do
+        stub_request(:get, dummy_url)
+          .to_return(status: 500).times(2)
+          .then.to_return(status: 200, body: response_body_when_success.to_json, headers: {})
+      end
 
+      let!(:excepted_body) { JSON.parse(response_body_when_success.to_json) }
+
+      it '2回クエストし、3回目のリクエストで正しいレスポンスが取得できること' do
+        expect(subject).to eq(excepted_body)
+      end
+    end
+
+    context '3回のリクエストで500がレスポンスされる場合' do
+      before do
+        stub_request(:get, dummy_url)
+          .to_return(status: 500, body: response_body_when_failed.to_json, headers: {})
+          .times(3)
+          .then.to_return(status: 200, body: response_body_when_success.to_json, headers: {})
+      end
+      let!(:excepted_body) { JSON.parse(response_body_when_failed.to_json) }
+
+      it 'fails to fetch a popular movie list after retrying' do
+        expect(subject).to be_nil
+      end
+    end
+  end
+
+  let!(:client) { described_class.new }
+
+  describe '#fetch_popular_list' do
     let!(:dummy_url) { 'https://test.org/3/movie/popular?api_key=dummy_api_key&language=ja&page=1' }
-    let!(:client) { described_class.new }
+
     context 'ステータスコード: 200がレスポンスされる場合' do
       let(:response_body) do
         {
@@ -32,22 +63,19 @@ RSpec.describe Api::TheMovieDatabase::Client do
           ]
         }
       end
-
       before do
         stub_request(:get, dummy_url)
           .to_return(status: 200, body: response_body.to_json, headers: { 'Content-Type' => 'application/json' })
       end
-
-      let!(:excepted_body) { JSON.parse(response_body.to_json) }
-
       subject { client.fetch_popular_list }
+      let!(:excepted_body) { JSON.parse(response_body.to_json) }
       it '人気の映画一覧が取得できる' do
         expect(subject).to eq(excepted_body)
       end
     end
 
-    context '2回のリクエストで503, 3回目のリクエストで200がレスポンスされる場合' do
-      let(:response_body) do
+    describe 'リトライ処理の検証' do
+      let!(:response_body_when_success) do
         {
           results: [
             {
@@ -57,23 +85,7 @@ RSpec.describe Api::TheMovieDatabase::Client do
           ]
         }
       end
-
-      before do
-        stub_request(:get, dummy_url)
-          .to_return(status: 500).times(2)
-          .then.to_return(status: 200, body: response_body.to_json, headers: {})
-      end
-
-      let!(:excepted_body) { JSON.parse(response_body.to_json) }
-
-      it 'retries the request and fetches a popular movie list' do
-        response = client.fetch_popular_list
-        expect(response).to eq(excepted_body)
-      end
-    end
-
-    context '3回のリクエストで500がレスポンスされる場合' do
-      let(:response_body) do
+      let(:response_body_when_failed) do
         {
           errors: [
               "page must be less than or equal to 500"
@@ -81,19 +93,60 @@ RSpec.describe Api::TheMovieDatabase::Client do
           success: false
         }
       end
+      subject { client.fetch_popular_list }
+      it_behaves_like 'リトライ処理が正しいこと'
+    end
+  end
 
+  describe '#fetch_movie_genre' do
+    let!(:dummy_url) { 'https://test.org/3/genre/movie/list?api_key=dummy_api_key&language=ja' }
+    context 'ステータスコード: 200がレスポンスされる場合' do
+      let(:response_body) do
+        {
+          genres: [
+            {
+              id: 1,
+              title: 'アクション'
+            },
+            {
+              id: 2,
+              title: 'アニメーション'
+            }
+          ]
+        }
+      end
       before do
         stub_request(:get, dummy_url)
-          .to_return(status: 500, body: response_body.to_json, headers: {})
-          .times(3)
-          .then.to_return(status: 200, body: response_body.to_json, headers: {})
+          .to_return(status: 200, body: response_body.to_json, headers: { 'Content-Type' => 'application/json' })
       end
-
-      it 'fails to fetch a popular movie list after retrying' do
-        response = client.fetch_popular_list
-
-        expect(response).to be_nil
+      subject { client.fetch_movie_genres }
+      let!(:excepted_body) { JSON.parse(response_body.to_json) }
+      it '映画のジャンル一覧が取得できる' do
+        expect(subject).to eq(excepted_body)
       end
+    end
+
+    describe 'リトライ処理の検証' do
+      let!(:response_body_when_success) do
+        {
+          genres: [
+            {
+              id: 2,
+              title: 'アニメーション'
+            }
+          ]
+        }
+      end
+      let(:response_body_when_failed) do
+        {
+          errors: [
+              "page must be less than or equal to 500"
+          ],
+          success: false
+        }
+      end
+      subject { client.fetch_movie_genres }
+      it_behaves_like 'リトライ処理が正しいこと'
     end
   end
 end

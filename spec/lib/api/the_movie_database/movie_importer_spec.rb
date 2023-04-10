@@ -1,8 +1,7 @@
 require 'rails_helper'
-require 'webmock/rspec'
-require_relative "#{Rails.root}/lib/api/the_movie_database/response_importer"
+require_relative "#{Rails.root}/lib/api/the_movie_database/movie_importer"
 
-RSpec.describe Api::TheMovieDatabase::ResponseImporter do
+RSpec.describe Api::TheMovieDatabase::MovieImporter do
 
   RSpec::Matchers.define_negated_matcher :not_change, :change
 
@@ -32,6 +31,20 @@ RSpec.describe Api::TheMovieDatabase::ResponseImporter do
       expect(movies[1].original_language).to eq responsed_movies[1][:original_language]
       expect(movies[1].vote_average).to eq responsed_movies[1][:vote_average]
       expect(movies[1].vote_count).to eq responsed_movies[1][:vote_count]
+    end
+  end
+
+  shared_context '戻り値が正しいこと' do
+    let(:expected_return_value) {
+      Movie.where(the_movie_database_id: [1, 2]).pluck(:id, :the_movie_database_id).map do |row|
+        {
+          id: row[0],
+          the_movie_database_id: row[1]
+        }
+      end
+    }
+    it do
+      expect(subject).to match_array expected_return_value
     end
   end
 
@@ -67,13 +80,10 @@ RSpec.describe Api::TheMovieDatabase::ResponseImporter do
   }
 
   describe '#initialize' do
-    subject { Api::TheMovieDatabase::ResponseImporter.new(params: params) }
+    subject { described_class.new(params: params) }
 
     let!(:params) {
-      results = {
-        results: responsed_movies
-      }
-      JSON.parse(results.to_json)
+      JSON.parse(responsed_movies.to_json)
     }
     example 'Movieが追加されないこと' do
       expect { subject }.not_to change { Movie.count }
@@ -84,13 +94,10 @@ RSpec.describe Api::TheMovieDatabase::ResponseImporter do
   end
 
   describe '#execute!' do
-    let!(:importer) { Api::TheMovieDatabase::ResponseImporter.new(params: params) }
+    let!(:importer) { described_class.new(params: params) }
 
     let!(:params) {
-      results = {
-        results: responsed_movies
-      }
-      JSON.parse(results.to_json)
+      JSON.parse(responsed_movies.to_json)
     }
     subject { importer.execute! }
     context 'importする映画情報が既存のテーブルに存在しない場合' do
@@ -102,6 +109,7 @@ RSpec.describe Api::TheMovieDatabase::ResponseImporter do
         Movie.all.order(:the_movie_database_id)
       }
       it_behaves_like 'Movieに格納されたデータが正しいこと'
+      it_behaves_like '戻り値が正しいこと'
     end
 
     context 'importする件の映画情報のうち1件が既存のテーブルに存在する場合' do

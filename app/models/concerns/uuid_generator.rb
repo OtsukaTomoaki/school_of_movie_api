@@ -6,6 +6,7 @@ module UuidGenerator
   end
 
   def fill_uuid
+    return if self.class.primary_key != 'id'
     self.id = loop do
       uuid = SecureRandom.uuid
       break uuid unless self.class.exists?(id: uuid)
