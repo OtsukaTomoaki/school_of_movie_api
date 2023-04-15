@@ -72,6 +72,10 @@ gem 'rest-client'
 
 gem 'activerecord-import'
 
+gem 'sanitize'
+
+gem 'kaminari'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
@@ -98,4 +102,5 @@ group :test do
   gem 'action-cable-testing'
   gem 'webmock'
   gem 'shoulda-matchers'
+  gem 'rails-controller-testing'
 end
