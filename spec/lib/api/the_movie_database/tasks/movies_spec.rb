@@ -9,7 +9,7 @@ RSpec.describe 'movies:fetch_popular_movie' do
   let(:movies_client) { instance_double(Api::TheMovieDatabase::Client) }
   let(:importer) { instance_double(Api::TheMovieDatabase::Importer) }
   let(:request_max_times) { 5 }
-  let(:sleep_time) { 5 }
+  let(:sleep_time) { 1 }
   before do
     allow(Api::TheMovieDatabase::Client).to receive(:new).and_return(movies_client)
     allow(Api::TheMovieDatabase::Importer).to receive(:new).and_return(importer)
