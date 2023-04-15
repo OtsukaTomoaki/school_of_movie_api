@@ -18,7 +18,7 @@ namespace :movies do
 
       break if response['total_pages'] <= page
 
-      sleep(5)
+      sleep(1)
     end
   end
 end
