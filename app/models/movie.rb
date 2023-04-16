@@ -1,3 +1,6 @@
+require_relative "#{Rails.root}/lib/api/the_movie_database/client"
+require_relative "#{Rails.root}/lib/api/the_movie_database/importer"
+
 class Movie < ApplicationRecord
   has_many :movie_genre_relations
   validates :title, presence: true
@@ -22,5 +25,15 @@ class Movie < ApplicationRecord
     movies.order(vote_count: :desc, vote_average: :desc)
       .page(page)
       .per(PER_PAGE)
+  end
+
+  def self.fetch_from_the_movie_database(query:)
+    # TheMovieDatabase::Clientクラスを使って、APIからデータを取得する
+    client = Api::TheMovieDatabase::Client.new
+    response = client.fetch_searched_list(page: 1, query: query)
+
+    # TheMovieDatabase::Importerクラスを使って、データをDBに保存する
+    importer = Api::TheMovieDatabase::Importer.new(params: response)
+    importer.execute!
   end
 end

@@ -130,4 +130,43 @@ RSpec.describe Movie, type: :model do
       end
     end
   end
+
+  describe '#fetch_from_the_movie_database' do
+    let(:response_body) do
+      JSON.parse(
+        {
+          results: [
+            {
+              id: 1,
+              title: 'The Shawshank Redemption',
+              original_title: 'The Shawshank Redemption',
+              overview: 'test',
+              original_language: 'en',
+              release_date: '1994-09-23',
+              adult: false,
+              genre_ids: []
+            },
+            {
+              id: 2,
+              title: 'The Godfather',
+              original_title: 'The Godfather',
+              overview: 'test',
+              original_language: 'en',
+              release_date: '1972-03-14',
+              adult: false,
+              genre_ids: []
+            }
+          ]
+        }.to_json
+      )
+    end
+
+    before do
+      allow_any_instance_of(Api::TheMovieDatabase::Client).to receive(:fetch_searched_list).and_return(response_body)
+    end
+
+    it 'APIからデータを取得し、DBに保存することができる' do
+      expect { described_class.fetch_from_the_movie_database(query: 'test') }.to change { Movie.count }.by(2)
+    end
+  end
 end
