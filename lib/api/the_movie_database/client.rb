@@ -2,7 +2,7 @@ module Api
   module TheMovieDatabase
     require 'json'
     require 'rest-client'
-    require_relative '../base_client'
+    require_relative "#{Rails.root}/lib/api/base_client"
 
     class Client < Api::BaseClient
       BASE_URL = ENV['THE_MOVIE_DATABASE_URL'].freeze
@@ -20,6 +20,18 @@ module Api
           page: page,
         }
         url = "#{BASE_URL}/movie/popular"
+
+        get(url: url, params: params)
+      end
+
+      def fetch_searched_list(page: 1, language: 'ja', query:)
+        params = {
+          api_key: API_KEY,
+          language: language,
+          page: page,
+          query: query
+        }
+        url = "#{BASE_URL}/search/movie"
 
         get(url: url, params: params)
       end
