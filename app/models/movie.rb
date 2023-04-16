@@ -8,8 +8,6 @@ class Movie < ApplicationRecord
   PER_PAGE = 10
 
   def self.search(query:, genre_id: nil, page:)
-    self.fetch_from_the_movie_database(query:) if query.present?
-
     # movie_genresをleft joinして、titleにqueryが含まれるレコードを取得する
     movies = includes(:movie_genre_relations)
     .includes(movie_genre_relations: :movie_genre)
