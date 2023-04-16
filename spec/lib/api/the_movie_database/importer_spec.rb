@@ -102,10 +102,10 @@ RSpec.describe Api::TheMovieDatabase::Importer do
   describe '#execute!' do
     include_context '映画情報のJSON'
     before {
-      FactoryBot.create(:movie_genre).update(id: 1)
-      FactoryBot.create(:movie_genre).update(id: 2)
-      FactoryBot.create(:movie_genre).update(id: 3)
-      FactoryBot.create(:movie_genre).update(id: 4)
+      FactoryBot.create(:movie_genre, the_movie_database_id: 1).update(id: 'a')
+      FactoryBot.create(:movie_genre, the_movie_database_id: 2).update(id: 'b')
+      FactoryBot.create(:movie_genre, the_movie_database_id: 3).update(id: 'c')
+      FactoryBot.create(:movie_genre, the_movie_database_id: 4).update(id: 'd')
     }
 
     subject { importer.execute! }
@@ -135,7 +135,7 @@ RSpec.describe Api::TheMovieDatabase::Importer do
         FactoryBot.create(
           :movie_genre_relation,
           movie_id: movie_id,
-          movie_genre_id: 1
+          movie_genre_id: 'a'
         )
       }
       let(:importer) {
@@ -157,6 +157,12 @@ RSpec.describe Api::TheMovieDatabase::Importer do
 
   describe '#generate_movie_genre_relation_hash_array' do
     include_context '映画情報のJSON'
+    before {
+      FactoryBot.create(:movie_genre, the_movie_database_id: 1).update(id: 'a')
+      FactoryBot.create(:movie_genre, the_movie_database_id: 2).update(id: 'b')
+      FactoryBot.create(:movie_genre, the_movie_database_id: 3).update(id: 'c')
+      FactoryBot.create(:movie_genre, the_movie_database_id: 4).update(id: 'd')
+    }
     subject { importer.send(:generate_movie_genre_relation_hash_array, movie_hash_array: params) }
     let(:importer) { described_class.new(params: import_params) }
     context "3件のジャンル情報が設定された映画が2つある場合" do
@@ -177,12 +183,12 @@ RSpec.describe Api::TheMovieDatabase::Importer do
 
       it "6件の映画とジャンルのリレーションが返されること" do
         expect(subject).to match_array [
-          { movie_id: '1', movie_genre_id: '1' },
-          { movie_id: '1', movie_genre_id: '2' },
-          { movie_id: '1', movie_genre_id: '3' },
-          { movie_id: '2', movie_genre_id: '2' },
-          { movie_id: '2', movie_genre_id: '3' },
-          { movie_id: '2', movie_genre_id: '4' }
+          { movie_id: '1', movie_genre_id: 'a' },
+          { movie_id: '1', movie_genre_id: 'b' },
+          { movie_id: '1', movie_genre_id: 'c' },
+          { movie_id: '2', movie_genre_id: 'b' },
+          { movie_id: '2', movie_genre_id: 'c' },
+          { movie_id: '2', movie_genre_id: 'd' }
         ]
       end
     end
@@ -203,11 +209,11 @@ RSpec.describe Api::TheMovieDatabase::Importer do
         ]
       end
 
-      it "6件の映画とジャンルのリレーションが返されること" do
+      it "3件の映画とジャンルのリレーションが返されること" do
         expect(subject).to match_array [
-          { movie_id: '1', movie_genre_id: '1' },
-          { movie_id: '1', movie_genre_id: '2' },
-          { movie_id: '1', movie_genre_id: '3' }
+          { movie_id: '1', movie_genre_id: 'a' },
+          { movie_id: '1', movie_genre_id: 'b' },
+          { movie_id: '1', movie_genre_id: 'c' }
         ]
       end
     end

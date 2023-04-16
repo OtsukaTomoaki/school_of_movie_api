@@ -35,10 +35,17 @@ module Api
       end
 
       def get_movie_genre_relations(movie_id:, the_movie_database_id:)
+        movie_genres = MovieGenre.all.to_a
         @movie_genre_relation_json_array[the_movie_database_id.to_s].map do |genre_id|
+          movie_genre = movie_genres.find { |movie_genre|
+            movie_genre.the_movie_database_id == genre_id.to_s
+          }
+          # ジャンルのない映画は無視する
+          next if movie_genre.nil?
+
           {
             movie_id: movie_id.to_s,
-            movie_genre_id: genre_id.to_s
+            movie_genre_id: movie_genre.id
           }
         end
       end
