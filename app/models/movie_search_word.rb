@@ -1,0 +1,3 @@
+class MovieSearchWord < ApplicationRecord
+
+end
