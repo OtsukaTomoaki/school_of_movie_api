@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_18_064148) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_23_050425) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -60,6 +60,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_18_064148) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["the_movie_database_id"], name: "index_movie_genres_on_the_movie_database_id", unique: true
+  end
+
+  create_table "movie_search_words", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
+    t.string "word"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["word"], name: "index_movie_search_words_on_word"
   end
 
   create_table "movies", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
