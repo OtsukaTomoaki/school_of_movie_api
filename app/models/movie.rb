@@ -16,6 +16,9 @@ class Movie < ApplicationRecord
       # queryをサニタイズする
       sanitized_q = sanitize_sql_like(query)
       movies = movies.where('title LIKE ?', "%#{sanitized_q}%")
+
+      # 検索されたワードをDBに保存する
+      MovieSearchWord.add_word(query)
     end
 
     if genre_id.present?
