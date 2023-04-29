@@ -49,37 +49,67 @@ RSpec.describe Movie, type: :model do
     let!(:relation2) { FactoryBot.create(:movie_genre_relation, movie: movie1, movie_genre: genre2) }
     let!(:relation3) { FactoryBot.create(:movie_genre_relation, movie: movie2, movie_genre: genre2) }
 
+    shared_context 'add_wordが呼ばれること' do
+      before {
+        allow(MovieSearchWord).to receive(:add_word)
+      }
+      it do
+        subject
+        expect(MovieSearchWord).to have_received(:add_word).with(query)
+      end
+    end
+
+    shared_context 'add_wordが呼ばれないこと' do
+      before {
+        allow(MovieSearchWord).to receive(:add_word)
+      }
+      it do
+        subject
+        expect(MovieSearchWord).to_not have_received(:add_word)
+      end
+    end
+
     context '検索クエリに一致する映画が1件だけ存在する場合' do
+      let!(:query) { 'Test Movie 1' }
+      subject { described_class.search(query: query, page: 1) }
+
       it '検索クエリに一致する映画を返すこと' do
-        result = described_class.search(query: 'Test Movie 1', page: 1)
-        expect(result).to match_array([movie1])
+        expect(subject).to match_array([movie1])
       end
 
       it '検索結果に映画の全てのジャンルが含まれること' do
-        result = described_class.search(query: 'Test Movie 1', page: 1)
-        expect(result.first.movie_genre_relations.map(&:movie_genre)).to match_array([genre1, genre2])
+        expect(subject.first.movie_genre_relations.map(&:movie_genre)).to match_array([genre1, genre2])
       end
+
+      it_behaves_like 'add_wordが呼ばれること'
     end
 
     context '検索クエリに一致する映画が複数存在する場合' do
+      let!(:query) { 'Test' }
+      subject { described_class.search(query: query, page: 1) }
+
       it '検索クエリに一致する映画をvote_countとvote_averageの降順に返すこと' do
-        result = described_class.search(query: 'Test', page: 1)
-        expect(result).to match_array([movie1, movie2])
-        expect(result.first).to eq(movie1)
+        expect(subject).to match_array([movie1, movie2])
+        expect(subject.first).to eq(movie1)
       end
 
       it '検索結果に全ての映画のジャンルが含まれること' do
-        result = described_class.search(query: 'Test', page: 1)
-        expect(result.first.movie_genre_relations.map(&:movie_genre)).to match_array([genre1, genre2])
-        expect(result.last.movie_genre_relations.map(&:movie_genre)).to match_array([genre2])
+        expect(subject.first.movie_genre_relations.map(&:movie_genre)).to match_array([genre1, genre2])
+        expect(subject.last.movie_genre_relations.map(&:movie_genre)).to match_array([genre2])
       end
+
+      it_behaves_like 'add_wordが呼ばれること'
     end
 
     context '検索クエリに一致する映画が存在しない場合' do
+      let!(:query) { 'Not Found' }
+      subject { described_class.search(query: query, page: 1) }
+
       it '空の配列を返すこと' do
-        result = described_class.search(query: 'Not Found', page: 1)
-        expect(result).to be_empty
+        expect(subject).to be_empty
       end
+
+      it_behaves_like 'add_wordが呼ばれること'
     end
 
     context 'ページ数が1の場合' do
@@ -95,6 +125,18 @@ RSpec.describe Movie, type: :model do
         result = described_class.search(query: 'Test', page: 1)
         expect(result.first).to eq(movie1)
       end
+    end
+
+    context 'queryが空文字の場合' do
+      let!(:query) { '' }
+      subject { described_class.search(query: query, page: 1) }
+      it_behaves_like 'add_wordが呼ばれないこと'
+    end
+
+    context 'queryがnilの場合' do
+      let!(:query) { nil }
+      subject { described_class.search(query: query, page: 1) }
+      it_behaves_like 'add_wordが呼ばれないこと'
     end
 
     context 'ページ数が2以上の場合' do
