@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_23_054834) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_30_092116) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -37,6 +37,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_23_054834) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "background_jobs", charset: "utf8mb4", force: :cascade do |t|
+    t.string "job_type"
+    t.string "query"
+    t.string "status", default: "pending"
+    t.integer "external_api_limit"
+    t.integer "external_api_requests_count", default: 0
+    t.datetime "next_request_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["job_type", "query"], name: "index_background_jobs_on_job_type_and_query", unique: true
   end
 
   create_table "messages", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
