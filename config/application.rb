@@ -29,5 +29,6 @@ module ProjectManageApi
     config.action_controller.forgery_protection_origin_check = false
     config.action_cable.mount_path = "/cable"
     config.autoload_paths += %W(#{config.root}/lib)
+    config.active_job.queue_adapter = :sidekiq
   end
 end
