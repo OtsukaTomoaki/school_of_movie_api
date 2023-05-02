@@ -40,8 +40,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_01_082723) do
   end
 
   create_table "background_jobs", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
-    t.string "job_type"
-    t.string "status", default: "pending"
+    t.integer "job_type"
+    t.integer "status"
     t.integer "external_api_limit"
     t.integer "external_api_requests_count", default: 0
     t.datetime "next_request_at"
