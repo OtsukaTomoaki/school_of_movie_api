@@ -39,7 +39,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_01_082723) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "background_jobs", charset: "utf8mb4", force: :cascade do |t|
+  create_table "background_jobs", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
     t.string "job_type"
     t.string "status", default: "pending"
     t.integer "external_api_limit"
@@ -49,7 +49,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_01_082723) do
     t.datetime "updated_at", null: false
     t.json "arguments"
     t.index ["job_type"], name: "index_background_jobs_on_job_type"
-    t.index ["job_type"], name: "index_background_jobs_on_job_type_and_query", unique: true
+    t.index ["job_type"], name: "index_background_jobs_on_job_type_and_query"
   end
 
   create_table "messages", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|

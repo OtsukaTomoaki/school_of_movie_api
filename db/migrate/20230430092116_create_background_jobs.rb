@@ -1,6 +1,7 @@
 class CreateBackgroundJobs < ActiveRecord::Migration[7.0]
   def change
-    create_table :background_jobs do |t|
+    create_table :background_jobs, id: false  do |t|
+      t.string :id, limit: 36, null: false, primary_key: true
       t.string :job_type
       t.string :query
       t.string :status, default: "pending"
@@ -10,6 +11,6 @@ class CreateBackgroundJobs < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :background_jobs, [:job_type, :query], unique: true
+    add_index :background_jobs, [:job_type, :query]
   end
 end
