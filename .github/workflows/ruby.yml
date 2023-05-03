@@ -14,7 +14,7 @@ on:
     branches: [ "develop" ]
 
 env:
-  REDIS_URL: redis:6379
+  REDIS_URL: localhost:6379
 
 permissions:
   contents: read
@@ -38,7 +38,6 @@ jobs:
           - 3306:3306
       redis:
         image: redis
-        options: --name redis
         ports:
           - 6379:6379
 
@@ -89,4 +88,3 @@ jobs:
           bundle exec rspec
         env:
           RAILS_ENV: test
-          REDIS_URL: redis:6379
