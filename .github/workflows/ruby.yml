@@ -14,7 +14,7 @@ on:
     branches: [ "develop" ]
 
 env:
-  REDIS_URL: redis:6379
+  REDIS_URL: 127.0.0.1:6379
 
 permissions:
   contents: read
@@ -40,9 +40,6 @@ jobs:
         image: redis
         ports:
           - 6379:6379
-        env:
-          REDIS_HOST: redis
-          REDIS_PORT: 6379
 
     steps:
       - name: Checkout code
