@@ -4,9 +4,9 @@ development:
 
 test:
   adapter: test
-  url: <%= redis://<%= ENV.fetch("REDIS_URL") { "redis:6379" } %>/0/cache %>
+  url: redis://<%= ENV.fetch("REDIS_URL") { "redis:6379" } %>/0/cache
 
 production:
   adapter: redis
-  url: <%= redis://<%= ENV.fetch("REDIS_URL") { "redis:6379" } %>/0/cache %>
+  url: redis://<%= ENV.fetch("REDIS_URL") { "redis:6379" } %>/0/cache
   channel_prefix: funny_cats_api_production
