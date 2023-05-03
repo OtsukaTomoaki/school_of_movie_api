@@ -85,3 +85,4 @@ jobs:
           bundle exec rspec
         env:
           RAILS_ENV: test
+          REDIS_URL: redis:6379
