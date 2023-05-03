@@ -49,23 +49,27 @@ RSpec.describe Movie, type: :model do
     let!(:relation2) { FactoryBot.create(:movie_genre_relation, movie: movie1, movie_genre: genre2) }
     let!(:relation3) { FactoryBot.create(:movie_genre_relation, movie: movie2, movie_genre: genre2) }
 
-    shared_context 'add_wordが呼ばれること' do
+    shared_context 'add_word, schedule_import_searched_moviesが呼ばれること' do
       before {
         allow(MovieSearchWord).to receive(:add_word)
+        allow(BackgroundJob).to receive(:schedule_import_searched_movies)
       }
       it do
         subject
         expect(MovieSearchWord).to have_received(:add_word).with(query)
+        expect(BackgroundJob).to have_received(:schedule_import_searched_movies).with(query: query)
       end
     end
 
-    shared_context 'add_wordが呼ばれないこと' do
+    shared_context 'add_word, schedule_import_searched_moviesが呼ばれないこと' do
       before {
         allow(MovieSearchWord).to receive(:add_word)
+        allow(BackgroundJob).to receive(:schedule_import_searched_movies)
       }
       it do
         subject
         expect(MovieSearchWord).to_not have_received(:add_word)
+        expect(BackgroundJob).to_not have_received(:schedule_import_searched_movies)
       end
     end
 
@@ -81,7 +85,7 @@ RSpec.describe Movie, type: :model do
         expect(subject.first.movie_genre_relations.map(&:movie_genre)).to match_array([genre1, genre2])
       end
 
-      it_behaves_like 'add_wordが呼ばれること'
+      it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれること'
     end
 
     context '検索クエリに一致する映画が複数存在する場合' do
@@ -98,7 +102,7 @@ RSpec.describe Movie, type: :model do
         expect(subject.last.movie_genre_relations.map(&:movie_genre)).to match_array([genre2])
       end
 
-      it_behaves_like 'add_wordが呼ばれること'
+      it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれること'
     end
 
     context '検索クエリに一致する映画が存在しない場合' do
@@ -109,7 +113,7 @@ RSpec.describe Movie, type: :model do
         expect(subject).to be_empty
       end
 
-      it_behaves_like 'add_wordが呼ばれること'
+      it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれること'
     end
 
     context 'ページ数が1の場合' do
@@ -130,13 +134,13 @@ RSpec.describe Movie, type: :model do
     context 'queryが空文字の場合' do
       let!(:query) { '' }
       subject { described_class.search(query: query, page: 1) }
-      it_behaves_like 'add_wordが呼ばれないこと'
+      it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれないこと'
     end
 
     context 'queryがnilの場合' do
       let!(:query) { nil }
       subject { described_class.search(query: query, page: 1) }
-      it_behaves_like 'add_wordが呼ばれないこと'
+      it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれないこと'
     end
 
     context 'ページ数が2以上の場合' do
