@@ -19,6 +19,7 @@ class Movie < ApplicationRecord
 
       # 検索されたワードをDBに保存する
       MovieSearchWord.add_word(query)
+      BackgroundJob.schedule_import_searched_movies(query: query)
     end
 
     if genre_id.present?

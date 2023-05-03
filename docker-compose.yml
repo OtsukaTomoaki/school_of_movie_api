@@ -27,7 +27,7 @@ services:
     tty: true
     stdin_open: true
     environment:
-      REDIS_URL: redis:6379
+      REDIS_HOST: redis:6379
   minio:
     image: 'minio/minio'
     container_name: minio

@@ -13,6 +13,9 @@ on:
   pull_request:
     branches: [ "develop" ]
 
+env:
+  REDIS_HOST: 127.0.0.1:6379
+
 permissions:
   contents: read
 
@@ -33,6 +36,10 @@ jobs:
           MYSQL_PASSWORD: mypass
         ports:
           - 3306:3306
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
 
     steps:
       - name: Checkout code
