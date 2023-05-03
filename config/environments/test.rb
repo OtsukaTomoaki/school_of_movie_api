@@ -26,7 +26,7 @@ Rails.application.configure do
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
   # config.cache_store = :null_store
-  config.cache_store = :redis_store, "redis://#{ENV['REDIS_HOST']}:6379/0/cache", { expires_in: 90.minutes }
+  config.cache_store = :redis_store, "redis://#{ENV['REDIS_HOST']}/0/cache", { expires_in: 90.minutes }
   config.active_record.cache_versioning = false
 
   # Raise exceptions instead of rendering exception templates.
