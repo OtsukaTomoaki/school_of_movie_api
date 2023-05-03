@@ -38,6 +38,7 @@ jobs:
           - 3306:3306
       redis:
         image: redis
+        options: --name redis
         ports:
           - 6379:6379
 
