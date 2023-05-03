@@ -1,6 +1,6 @@
-# Redis.current = Redis.new(url: "redis://#{ENV['REDIS_URL']}")
+# Redis.current = Redis.new(url: "redis://#{ENV['REDIS_HOST']}")
 # Redis クライアントの初期化
-redis_client = Redis.new(url: "redis://#{ENV['REDIS_URL']}")
+redis_client = Redis.new(url: "redis://#{ENV['REDIS_HOST']}")
 
 # グローバル変数に設定
 Rails.application.config.redis = redis_client
