@@ -24,8 +24,19 @@ services:
       - db
     depends_on:
       - db
+      - redis
     tty: true
     stdin_open: true
+    environment:
+      REDIS_HOST: redis:6379
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq
+    volumes:
+      - .:/funny_cats_api/
+    depends_on:
+      - db
+      - redis
     environment:
       REDIS_HOST: redis:6379
   minio:
