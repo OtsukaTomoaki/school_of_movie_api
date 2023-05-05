@@ -113,7 +113,7 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
     end
 
     describe 'レスポンスの検証' do
-      let!(:expected_response) {
+      let(:expected_response) {
         {
           movies: [
             {
@@ -154,14 +154,93 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
                 }
               ]
             }
-          ]
+          ],
+          meta: {
+            background_job: background_job_json
+          }
         }.to_json
       }
+      context "qが指定されていない場合" do
+        let(:background_job_json) {
+          nil
+        }
+        it '正しいJSONを返すこと' do
+          subject
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to eq(expected_response)
+        end
+      end
+      context "qが指定されている場合" do
+        before {
+          create(
+            :movie,
+            title: 'Gest Movie 1',
+            overview: 'Gest Movie 1 Overview'
+          )
+        }
+        let(:params) { { q: 'Test' } }
 
-      it '正しいJSONを返すこと' do
-        subject
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to eq(expected_response)
+        context "すでに実行中のジョブが存在しない場合" do
+          let(:background_job_json) {
+            background_job = BackgroundJob.order(created_at: :desc).first
+            {
+              id: background_job.id,
+              status: background_job.status,
+              progress: background_job.progress,
+              total: background_job.total,
+              created_at: background_job.created_at,
+              finished_at: background_job.finished_at,
+              job_type: background_job.job_type,
+              arguments: background_job.arguments
+            }
+          }
+          it '正しいJSONを返すこと' do
+            subject
+            expect(response).to have_http_status(:ok)
+            expect(response.body).to eq(expected_response)
+          end
+        end
+
+        context "すでにジョブが存在する場合" do
+          let!(:already_scheduled_background_job) {
+            create(
+              :background_job,
+              job_type: 'import_searched_movies',
+              arguments: { query: 'Test' },
+              status: job_status
+            )
+          }
+          let(:background_job_json) {
+            background_job = already_scheduled_background_job
+
+            {
+              id: background_job.id,
+              status: background_job.status,
+              progress: background_job.progress,
+              total: background_job.total,
+              created_at: background_job.created_at,
+              finished_at: background_job.finished_at,
+              job_type: background_job.job_type,
+              arguments: background_job.arguments
+            }
+          }
+          context "待機中のジョブが存在する場合" do
+            let(:job_status) { 'pending' }
+            it '正しいJSONを返すこと' do
+              subject
+              expect(response).to have_http_status(:ok)
+              expect(response.body).to eq(expected_response)
+            end
+          end
+          context "実行中のジョブが存在する場合" do
+            let(:job_status) { 'processing' }
+            it '正しいJSONを返すこと' do
+              subject
+              expect(response).to have_http_status(:ok)
+              expect(response.body).to eq(expected_response)
+            end
+          end
+        end
       end
     end
   end
