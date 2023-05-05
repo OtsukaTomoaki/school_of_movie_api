@@ -19,7 +19,7 @@ class BackgroundJobWorker < ApplicationJobWorker
     case job.job_type.to_sym
     when :import_searched_movies
       # 検索結果の映画情報をインポートする処理
-      MovieService.import_searched_movies(**parsed_arguments_to_deep_symbols)
+      MovieService.import_searched_movies(**parsed_arguments_to_deep_symbols, job: job)
     else
       raise "Unsupported job_type: #{job_type}"
     end

@@ -42,7 +42,7 @@ RSpec.describe BackgroundJobWorker, type: :worker do
 
       it 'ジョブが正しく処理される' do
         worker.execute(job: background_job)
-        expect(MovieService).to have_received(:import_searched_movies).with(query: '検索クエリ')
+        expect(MovieService).to have_received(:import_searched_movies).with(query: '検索クエリ', job: background_job)
       end
     end
 

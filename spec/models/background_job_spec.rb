@@ -34,30 +34,52 @@ RSpec.describe BackgroundJob, type: :model do
     describe '.schedule_import_searched_movies' do
       let(:query) { '検索クエリ' }
 
-      it 'スケジュールされたジョブが作成される' do
-        expect {
-          BackgroundJob.schedule_import_searched_movies(query: query)
-        }.to change { BackgroundJob.count }.by(1)
+      context "同じジョブが実行中でない場合" do
+        it 'スケジュールされたジョブが作成される' do
+          expect {
+            BackgroundJob.schedule_import_searched_movies(query: query)
+          }.to change { BackgroundJob.count }.by(1)
+        end
+
+        it '作成されたジョブのjob_typeがimport_searched_moviesである' do
+          job = BackgroundJob.schedule_import_searched_movies(query: query)
+          expect(job.job_type).to eq('import_searched_movies')
+        end
+
+        it '作成されたジョブのstatusがpendingである' do
+          job = BackgroundJob.schedule_import_searched_movies(query: query)
+          expect(job.status).to eq('pending')
+        end
+
+        it '作成されたジョブのnext_request_atが現在時刻である' do
+          job = BackgroundJob.schedule_import_searched_movies(query: query)
+          expect(job.next_request_at).to be_within(1.second).of(Time.current)
+        end
+
+        it '作成されたジョブのargumentsにqueryが含まれる' do
+          job = BackgroundJob.schedule_import_searched_movies(query: query)
+          expect(job.arguments['query']).to eq(query)
+        end
       end
 
-      it '作成されたジョブのjob_typeがimport_searched_moviesである' do
-        job = BackgroundJob.schedule_import_searched_movies(query: query)
-        expect(job.job_type).to eq('import_searched_movies')
-      end
+      context "同じジョブが実行中の場合" do
+        before do
+          create(:background_job,
+            job_type: described_class.job_types[:import_searched_movies],
+            status: described_class.statuses[:processing],
+            arguments: { query: query })
+        end
 
-      it '作成されたジョブのstatusがpendingである' do
-        job = BackgroundJob.schedule_import_searched_movies(query: query)
-        expect(job.status).to eq('pending')
-      end
+        it 'スケジュールされたジョブが作成されない' do
+          expect {
+            BackgroundJob.schedule_import_searched_movies(query: query)
+          }.not_to change { BackgroundJob.count }
+        end
 
-      it '作成されたジョブのnext_request_atが現在時刻である' do
-        job = BackgroundJob.schedule_import_searched_movies(query: query)
-        expect(job.next_request_at).to be_within(1.second).of(Time.current)
-      end
-
-      it '作成されたジョブのargumentsにqueryが含まれる' do
-        job = BackgroundJob.schedule_import_searched_movies(query: query)
-        expect(job.arguments['query']).to eq(query)
+        it '実行中のジョブが返される' do
+          job = BackgroundJob.schedule_import_searched_movies(query: query)
+          expect(job.status).to eq('processing')
+        end
       end
     end
 
