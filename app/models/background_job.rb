@@ -30,6 +30,17 @@ class BackgroundJob < ApplicationRecord
   end
 
   class << self
+    def search(status: nil, job_type: nil, page: 1, per: 10)
+      query = self
+      if status.present?
+        query = query.where(status: status)
+      end
+      if job_type.present?
+        query = query.where(job_type: job_type)
+      end
+      query.order(created_at: :desc).page(page).per(per)
+    end
+
     def schedule_import_searched_movies(query:)
       # 検索結果の映画情報をインポートするジョブをスケジュールする
       arguments = { query: query }

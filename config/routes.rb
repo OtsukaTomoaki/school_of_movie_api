@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       resources :talk_rooms
       resources :messages
       resources :movies
+      resources :background_jobs
     end
   end
 end

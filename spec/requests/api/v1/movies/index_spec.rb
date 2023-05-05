@@ -23,23 +23,28 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
     let!(:relation2) { FactoryBot.create(:movie_genre_relation, movie: movie1, movie_genre: genre2) }
     let!(:relation3) { FactoryBot.create(:movie_genre_relation, movie: movie2, movie_genre: genre2) }
 
-    shared_context 'fetch_from_the_movie_databaseが呼ばれないこと' do
+    shared_context 'add_word, schedule_import_searched_moviesが呼ばれること' do
+      let(:query) { params[:q] }
       before {
-        allow(Movie).to receive(:fetch_from_the_movie_database)
+        allow(MovieSearchWord).to receive(:add_word)
+        allow(BackgroundJob).to receive(:schedule_import_searched_movies)
       }
       it do
         subject
-        expect(Movie).not_to have_received(:fetch_from_the_movie_database)
+        expect(MovieSearchWord).to have_received(:add_word).with(query)
+        expect(BackgroundJob).to have_received(:schedule_import_searched_movies).with(query: query)
       end
     end
 
-    shared_context 'fetch_from_the_movie_databaseが1度だけ呼び出されること' do
+    shared_context 'add_word, schedule_import_searched_moviesが呼ばれないこと' do
       before {
-        allow(Movie).to receive(:fetch_from_the_movie_database)
+        allow(MovieSearchWord).to receive(:add_word)
+        allow(BackgroundJob).to receive(:schedule_import_searched_movies)
       }
       it do
         subject
-        expect(Movie).to have_received(:fetch_from_the_movie_database).once
+        expect(MovieSearchWord).to_not have_received(:add_word)
+        expect(BackgroundJob).to_not have_received(:schedule_import_searched_movies)
       end
     end
 
@@ -54,7 +59,7 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
         expect(response).to have_http_status(:ok)
         expect(assigns(:movies)).to match_array([movie1, movie2])
       end
-      it_behaves_like 'fetch_from_the_movie_databaseが呼ばれないこと'
+      it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれないこと'
     end
 
     context '検索クエリのみが指定された場合' do
@@ -64,7 +69,7 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
         expect(response).to have_http_status(:ok)
         expect(assigns(:movies)).to match_array([movie1, movie2])
       end
-      it_behaves_like 'fetch_from_the_movie_databaseが1度だけ呼び出されること'
+      it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれること'
     end
 
     context 'ジャンルIDのみが指定された場合' do
@@ -74,7 +79,7 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
         expect(response).to have_http_status(:ok)
         expect(assigns(:movies)).to match_array([movie1])
       end
-      it_behaves_like 'fetch_from_the_movie_databaseが呼ばれないこと'
+      it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれないこと'
     end
 
     context '検索クエリとジャンルIDが指定された場合' do
@@ -84,7 +89,7 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
         expect(response).to have_http_status(:ok)
         expect(assigns(:movies)).to match_array([movie1, movie2])
       end
-      it_behaves_like 'fetch_from_the_movie_databaseが1度だけ呼び出されること'
+      it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれること'
     end
 
     context 'ページ数が指定された場合' do
@@ -108,7 +113,7 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
     end
 
     describe 'レスポンスの検証' do
-      let!(:expected_response) {
+      let(:expected_response) {
         {
           movies: [
             {
@@ -149,14 +154,93 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
                 }
               ]
             }
-          ]
+          ],
+          meta: {
+            background_job: background_job_json
+          }
         }.to_json
       }
+      context "qが指定されていない場合" do
+        let(:background_job_json) {
+          nil
+        }
+        it '正しいJSONを返すこと' do
+          subject
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to eq(expected_response)
+        end
+      end
+      context "qが指定されている場合" do
+        before {
+          create(
+            :movie,
+            title: 'Gest Movie 1',
+            overview: 'Gest Movie 1 Overview'
+          )
+        }
+        let(:params) { { q: 'Test' } }
 
-      it '正しいJSONを返すこと' do
-        subject
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to eq(expected_response)
+        context "すでに実行中のジョブが存在しない場合" do
+          let(:background_job_json) {
+            background_job = BackgroundJob.order(created_at: :desc).first
+            {
+              id: background_job.id,
+              status: background_job.status,
+              progress: background_job.progress,
+              total: background_job.total,
+              created_at: background_job.created_at,
+              finished_at: background_job.finished_at,
+              job_type: background_job.job_type,
+              arguments: background_job.arguments
+            }
+          }
+          it '正しいJSONを返すこと' do
+            subject
+            expect(response).to have_http_status(:ok)
+            expect(response.body).to eq(expected_response)
+          end
+        end
+
+        context "すでにジョブが存在する場合" do
+          let!(:already_scheduled_background_job) {
+            create(
+              :background_job,
+              job_type: 'import_searched_movies',
+              arguments: { query: 'Test' },
+              status: job_status
+            )
+          }
+          let(:background_job_json) {
+            background_job = already_scheduled_background_job
+
+            {
+              id: background_job.id,
+              status: background_job.status,
+              progress: background_job.progress,
+              total: background_job.total,
+              created_at: background_job.created_at,
+              finished_at: background_job.finished_at,
+              job_type: background_job.job_type,
+              arguments: background_job.arguments
+            }
+          }
+          context "待機中のジョブが存在する場合" do
+            let(:job_status) { 'pending' }
+            it '正しいJSONを返すこと' do
+              subject
+              expect(response).to have_http_status(:ok)
+              expect(response.body).to eq(expected_response)
+            end
+          end
+          context "実行中のジョブが存在する場合" do
+            let(:job_status) { 'processing' }
+            it '正しいJSONを返すこと' do
+              subject
+              expect(response).to have_http_status(:ok)
+              expect(response.body).to eq(expected_response)
+            end
+          end
+        end
       end
     end
   end
