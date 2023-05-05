@@ -19,7 +19,7 @@ class BackgroundJob < ApplicationRecord
     BackgroundJobWorker.perform_at(next_request_at, id)
   end
 
-  def update_progress(new_progress, new_total:)
+  def update_progress(new_progress, new_total: nil)
     if new_progress.present? && new_progress != progress
       self.progress = new_progress
     end
