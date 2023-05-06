@@ -29,8 +29,6 @@ RSpec.describe BackgroundJob, type: :model do
 
   # メソッドのテスト
   describe 'メソッド' do
-    let(:background_job) { create(:background_job, job_type: :import_searched_movies, next_request_at: Time.current) }
-
     describe '.schedule_import_searched_movies' do
       shared_context 'import_searched_moviesのジョブがスケジュールされる' do
         it 'スケジュールされたジョブが作成される' do
@@ -76,10 +74,23 @@ RSpec.describe BackgroundJob, type: :model do
         end
       end
 
+      shared_context 'import_searched_moviesのジョブがスケジュールされない' do
+        it 'スケジュールされたジョブが作成されない' do
+          expect {
+            BackgroundJob.schedule_import_searched_movies(query: query)
+          }.not_to change { BackgroundJob.count }
+        end
+      end
+
       let(:query) { '検索クエリ' }
 
       context "同じジョブまたは実行中のジョブがない場合" do
         it_behaves_like 'import_searched_moviesのジョブがスケジュールされる'
+      end
+
+      context 'queryが3文字未満の場合' do
+        let(:query) { '検索' }
+        it_behaves_like 'import_searched_moviesのジョブがスケジュールされない'
       end
 
       context "同一のjob_typeが存在する場合" do
@@ -87,28 +98,55 @@ RSpec.describe BackgroundJob, type: :model do
           create(:background_job,
             job_type: described_class.job_types[:import_searched_movies],
             status: already_scheduled_job_status,
-            arguments: { query: already_scheduled_job_query })
+            arguments: { query: already_scheduled_job_query },
+            created_at: already_scheduled_job_created_at
+          )
         }
+
         context "queryが同一の場合" do
           let(:already_scheduled_job_query) { query }
-          context "statusがpendingの場合" do
-            let(:already_scheduled_job_status) { described_class.statuses[:pending] }
-            it_behaves_like 'import_searched_moviesのジョブがスケジュールされず、すでに実行中のジョブが返される'
+          context 'created_atが23時間前の場合' do
+            let(:already_scheduled_job_created_at) { 23.hours.ago }
+            context "statusがpendingの場合" do
+              let(:already_scheduled_job_status) { described_class.statuses[:pending] }
+              it_behaves_like 'import_searched_moviesのジョブがスケジュールされず、すでに実行中のジョブが返される'
+            end
+            context "statusがprocessingの場合" do
+              let(:already_scheduled_job_status) { described_class.statuses[:processing] }
+              it_behaves_like 'import_searched_moviesのジョブがスケジュールされず、すでに実行中のジョブが返される'
+            end
+            context "statusがcompleteの場合" do
+              let(:already_scheduled_job_status) { described_class.statuses[:complete] }
+              it_behaves_like 'import_searched_moviesのジョブがスケジュールされず、すでに実行中のジョブが返される'
+            end
+            context "statusがerrorの場合" do
+              let(:already_scheduled_job_status) {  described_class.statuses[:error] }
+              it_behaves_like 'import_searched_moviesのジョブがスケジュールされず、すでに実行中のジョブが返される'
+            end
           end
-          context "statusがprocessingの場合" do
-            let(:already_scheduled_job_status) { described_class.statuses[:processing] }
-            it_behaves_like 'import_searched_moviesのジョブがスケジュールされず、すでに実行中のジョブが返される'
-          end
-          context "statusがcompleteの場合" do
-            let(:already_scheduled_job_status) { described_class.statuses[:complete] }
-            it_behaves_like 'import_searched_moviesのジョブがスケジュールされる'
-          end
-          context "statusがerrorの場合" do
-            let(:already_scheduled_job_status) {  described_class.statuses[:error] }
-            it_behaves_like 'import_searched_moviesのジョブがスケジュールされる'
+          context 'created_atが25時間前の場合' do
+            let(:already_scheduled_job_created_at) { 25.hours.ago }
+            context "statusがpendingの場合" do
+              let(:already_scheduled_job_status) { described_class.statuses[:pending] }
+              it_behaves_like 'import_searched_moviesのジョブがスケジュールされず、すでに実行中のジョブが返される'
+            end
+            context "statusがprocessingの場合" do
+              let(:already_scheduled_job_status) { described_class.statuses[:processing] }
+              it_behaves_like 'import_searched_moviesのジョブがスケジュールされず、すでに実行中のジョブが返される'
+            end
+            context "statusがcompleteの場合" do
+              let(:already_scheduled_job_status) { described_class.statuses[:complete] }
+              it_behaves_like 'import_searched_moviesのジョブがスケジュールされる'
+            end
+            context "statusがerrorの場合" do
+              let(:already_scheduled_job_status) {  described_class.statuses[:error] }
+              it_behaves_like 'import_searched_moviesのジョブがスケジュールされる'
+            end
           end
         end
         context "queryが異なる場合" do
+          let(:already_scheduled_job_created_at) { 23.hours.ago }
+
           let(:already_scheduled_job_query) { 'foo' }
           context "statusがpendingの場合" do
             let(:already_scheduled_job_status) { described_class.statuses[:pending] }
@@ -174,13 +212,6 @@ RSpec.describe BackgroundJob, type: :model do
           result = described_class.search(page: 2, per: 2)
           expect(result.map(&:id)).to eq [job3.id, job4.id]
         end
-      end
-    end
-
-    describe '#enqueue' do
-      it 'BackgroundJobWorkerにジョブが追加される' do
-        expect(BackgroundJobWorker).to receive(:perform_at).with(background_job.next_request_at, background_job.id)
-        background_job.enqueue
       end
     end
 
