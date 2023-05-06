@@ -156,7 +156,8 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
             }
           ],
           meta: {
-            background_job: background_job_json
+            background_job: background_job_json,
+            total_count: 2
           }
         }.to_json
       }
