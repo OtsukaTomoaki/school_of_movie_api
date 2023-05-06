@@ -8,4 +8,9 @@ class Api::V1::BackgroundJobsController < Api::V1::ApplicationController
 
     @background_jobs = BackgroundJob.search(status: status, job_type: job_type, page: page, per: per_page)
   end
+
+  def show
+    # BackGroundJobの詳細を取得する
+    @background_job = BackgroundJob.find(params[:id])
+  end
 end
