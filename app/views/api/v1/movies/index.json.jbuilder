@@ -11,4 +11,5 @@ json.meta do
   else
     json.background_job nil
   end
+  json.total_count @movies.total_count
 end
