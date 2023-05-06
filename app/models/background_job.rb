@@ -15,9 +15,7 @@ class BackgroundJob < ApplicationRecord
   validates :next_request_at, presence: true
   after_update :update_finished_at, if: :status_finished?
 
-  def enqueue
-    BackgroundJobWorker.perform_at(next_request_at, id)
-  end
+  MIN_LENGTH_SEARCHED_WORD_TO_FETCH_MOVIES = 3
 
   def update_progress(new_progress, new_total: nil)
     if new_progress.present? && new_progress != progress
@@ -42,6 +40,11 @@ class BackgroundJob < ApplicationRecord
     end
 
     def schedule_import_searched_movies(query:)
+      if query.length < MIN_LENGTH_SEARCHED_WORD_TO_FETCH_MOVIES
+        # 検索ワードが短すぎる場合は、ジョブをスケジュールしない
+        return
+      end
+
       # 検索結果の映画情報をインポートするジョブをスケジュールする
       arguments = { query: query }
       job_type = job_types[:import_searched_movies]
@@ -67,10 +70,18 @@ class BackgroundJob < ApplicationRecord
 
     def get_already_scheduled_background_job_in_progress(job_type:, arguments:)
       BackgroundJob.where(
-        job_type: job_type,
-        status: [self.statuses[:pending], self.statuses[:processing]]
-      ).where(
+        job_type: job_type
+      )
+      .merge(
+        BackgroundJob
+          .where(status: [self.statuses[:pending], self.statuses[:processing]])
+          .or(BackgroundJob.where(created_at: 1.day.ago..Time.current))
+      )
+      .where(
         "JSON_CONTAINS(arguments, ?)", arguments.to_json
+      )
+      .order(
+        created_at: :desc
       ).first
     end
 
