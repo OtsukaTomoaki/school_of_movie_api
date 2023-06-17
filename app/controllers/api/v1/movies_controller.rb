@@ -14,4 +14,8 @@ class Api::V1::MoviesController < Api::V1::ApplicationController
       end
     end
   end
+
+  def show
+    @movie = Movie.find(params[:id])
+  end
 end
