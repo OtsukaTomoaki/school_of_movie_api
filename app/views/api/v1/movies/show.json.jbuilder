@@ -1,0 +1,1 @@
+json.partial! partial: 'api/v1/movies/movie', locals: { movie: @movie }
