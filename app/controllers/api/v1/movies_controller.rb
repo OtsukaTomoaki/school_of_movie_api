@@ -3,8 +3,10 @@ class Api::V1::MoviesController < Api::V1::ApplicationController
     query = params[:q]
     page = params[:page].present? ? params[:page] : 1
 
-    genre_id = params[:genre_id]
-    @movies = Movie.search(query: query, genre_id: genre_id, page: page)
+    genre_ids = params[:genre_ids].present? ? params[:genre_ids].split(',') : nil
+    search_genre_and = params[:search_genre_and] == 'true'
+    per_page = params[:per_page]
+    @movies = Movie.search(query: query, genre_ids: genre_ids, search_genre_and: search_genre_and, page: page, per_page: per_page)
 
     if query.present?
       @background_job = BackgroundJob.schedule_import_searched_movies(query: query)

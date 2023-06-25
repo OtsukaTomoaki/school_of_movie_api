@@ -73,17 +73,50 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
     end
 
     context 'ジャンルIDのみが指定された場合' do
-      let(:params) { { genre_id: genre1.id } }
-      it '指定したジャンルに一致する映画情報を取得すること' do
-        subject
-        expect(response).to have_http_status(:ok)
-        expect(assigns(:movies)).to match_array([movie1])
+      context 'AND検索の場合' do
+        let(:params) { { genre_ids: genre1.id, search_genre_and: true } }
+        context '単数のジャンルが指定されている場合' do
+          it '指定したジャンルに一致する映画情報を取得すること' do
+            subject
+            expect(response).to have_http_status(:ok)
+            expect(assigns(:movies)).to match_array([movie1])
+          end
+          it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれないこと'
+        end
+        context '複数のジャンルが指定されている場合' do
+          let(:params) { { genre_ids: [genre1.id, genre2.id].join(','), search_genre_and: true } }
+          it '指定したジャンルに一致する映画情報を取得すること' do
+            subject
+            expect(response).to have_http_status(:ok)
+            expect(assigns(:movies)).to match_array([movie1])
+          end
+          it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれないこと'
+        end
       end
-      it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれないこと'
+      context 'OR検索の場合' do
+        let(:params) { { genre_ids: genre1.id, search_genre_and: false } }
+        context '単数のジャンルが指定されている場合' do
+          it '指定したジャンルに一致する映画情報を取得すること' do
+            subject
+            expect(response).to have_http_status(:ok)
+            expect(assigns(:movies)).to match_array([movie1])
+          end
+          it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれないこと'
+        end
+        context '複数のジャンルが指定されている場合' do
+          let(:params) { { genre_ids: [genre1.id, genre2.id].join(','), search_genre_and: false } }
+          it '指定したジャンルに一致する映画情報を取得すること' do
+            subject
+            expect(response).to have_http_status(:ok)
+            expect(assigns(:movies)).to match_array([movie1, movie2])
+          end
+          it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれないこと'
+        end
+      end
     end
 
     context '検索クエリとジャンルIDが指定された場合' do
-      let(:params) { { q: 'Test', genre_id: genre2.id } }
+      let(:params) { { q: 'Test', genre_ids: genre2.id } }
       it '検索クエリと指定したジャンルに一致する映画情報を取得すること' do
         subject
         expect(response).to have_http_status(:ok)
@@ -103,12 +136,22 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
     end
 
     context '検索結果が11件以上の場合' do
-      before { 10.times { FactoryBot.create(:movie) } }
+      before { 30.times { FactoryBot.create(:movie) } }
 
-      it '10件の映画情報を取得すること' do
-        subject
-        expect(response).to have_http_status(:ok)
-        expect(assigns(:movies).count).to eq 10
+      context 'per_pageが指定されていない場合' do
+        it '10件の映画情報を取得すること' do
+          subject
+          expect(response).to have_http_status(:ok)
+          expect(assigns(:movies).count).to eq 10
+        end
+      end
+      context 'per_pageが指定されている場合' do
+        let(:params) { { per_page: 20 } }
+        it '指定した件数の映画情報を取得すること' do
+          subject
+          expect(response).to have_http_status(:ok)
+          expect(assigns(:movies).count).to eq 20
+        end
       end
     end
 
