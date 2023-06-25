@@ -7,7 +7,7 @@ class Movie < ApplicationRecord
 
   PER_PAGE = 10
 
-  def self.search(query:, genre_id: nil, page:)
+  def self.search(query:, genre_ids: nil, search_genre_and: false, page:, per_page: nil)
     # movie_genresをleft joinして、titleにqueryが含まれるレコードを取得する
     movies = includes(:movie_genre_relations)
     .includes(movie_genre_relations: :movie_genre)
@@ -18,13 +18,23 @@ class Movie < ApplicationRecord
       movies = movies.where('title LIKE ?', "%#{sanitized_q}%")
     end
 
-    if genre_id.present?
-      movies = movies.where(movie_genre: { id: genre_id } )
+    if genre_ids.present?
+      if search_genre_and
+        # AND検索
+        movie_ids = movies.where(movie_genre_relations: { movie_genre_id: genre_ids })
+          .group('movies.id')
+          .having('count(movie_genre_relations.movie_genre_id) = ?', genre_ids.count)
+          .pluck(:id)
+        movies = movies.where(id: movie_ids)
+      else
+        # OR検索
+        movies = movies.where(movie_genre_relations: { movie_genre_id: genre_ids })
+      end
     end
 
     movies.order(vote_count: :desc, vote_average: :desc)
       .page(page)
-      .per(PER_PAGE)
+      .per(per_page ? per_page : PER_PAGE)
   end
 
   def self.fetch_from_the_movie_database(query:)

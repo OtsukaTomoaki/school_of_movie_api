@@ -127,20 +127,60 @@ RSpec.describe Movie, type: :model do
     end
 
     context 'ジャンルを指定した場合' do
-      it '指定したジャンルに一致する映画を返すこと' do
-        result = described_class.search(query: '', page: 1, genre_id: genre1.id)
-        expect(result).to match_array([movie1])
-      end
+      context 'OR検索の場合' do
+        let(:search_genre_and) { false }
+        it '指定したジャンルに一致する映画を返すこと' do
+          result = described_class.search(query: '', page: 1, genre_ids: [genre1.id], search_genre_and: search_genre_and)
+          expect(result).to match_array([movie1])
+        end
 
-      it 'ジャンルに一致する映画をvote_countとvote_averageの降順に返すこと' do
-        result = described_class.search(query: '', page: 1, genre_id: genre2.id)
-        expect(result).to match_array([movie1, movie2])
-        expect(result.first).to eq(movie1)
-      end
+        it 'ジャンルに一致する映画をvote_countとvote_averageの降順に返すこと' do
+          result = described_class.search(query: '', page: 1, genre_ids: [genre2.id], search_genre_and: search_genre_and)
+          expect(result).to match_array([movie1, movie2])
+          expect(result.first).to eq(movie1)
+        end
 
-      it '存在しないジャンルが指定された場合、空の配列を返すこと' do
-        result = described_class.search(query: '', page: 1, genre_id: -1)
-        expect(result).to be_empty
+        it '複数のジャンルを指定した場合、指定したジャンルに一致する映画を返すこと' do
+          result = described_class.search(query: '', page: 1, genre_ids: [genre1.id, genre2.id], search_genre_and: search_genre_and)
+          expect(result).to match_array([movie1, movie2])
+        end
+
+        it '存在しないジャンルが指定された場合、空の配列を返すこと' do
+          result = described_class.search(query: '', page: 1, genre_ids: [-1], search_genre_and: search_genre_and)
+          expect(result).to be_empty
+        end
+      end
+      context 'AND検索の場合' do
+        let(:search_genre_and) { true }
+
+        it '指定したジャンルに一致する映画を返すこと' do
+          result = described_class.search(query: '', page: 1, genre_ids: [genre1.id], search_genre_and: search_genre_and)
+          expect(result).to match_array([movie1])
+        end
+
+        it 'ジャンルに一致する映画をvote_countとvote_averageの降順に返すこと' do
+          result = described_class.search(query: '', page: 1, genre_ids: [genre2.id], search_genre_and: search_genre_and)
+          expect(result).to match_array([movie1, movie2])
+          expect(result.first).to eq(movie1)
+        end
+
+        it '複数のジャンルを指定した場合、指定したジャンルに一致する映画を返すこと' do
+          result = described_class.search(query: '', page: 1, genre_ids: [genre1.id, genre2.id], search_genre_and: search_genre_and)
+          expect(result).to match_array([movie1])
+        end
+
+        it '存在しないジャンルが指定された場合、空の配列を返すこと' do
+          result = described_class.search(query: '', page: 1, genre_ids: [-1], search_genre_and: search_genre_and)
+          expect(result).to be_empty
+        end
+      end
+    end
+
+    context 'per_pageを指定した場合' do
+      let(:per_page) { 1 }
+      it '指定したper_pageの結果を返すこと' do
+        result = described_class.search(query: 'Test', page: 1, per_page: per_page)
+        expect(result.count).to eq(per_page)
       end
     end
   end
