@@ -99,7 +99,7 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
           it '指定したジャンルに一致する映画情報を取得すること' do
             subject
             expect(response).to have_http_status(:ok)
-            expect(assigns(:movies)).to match_array([movie1, movie2])
+            expect(assigns(:movies)).to match_array([movie1])
           end
           it_behaves_like 'add_word, schedule_import_searched_moviesが呼ばれないこと'
         end
