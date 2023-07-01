@@ -25,11 +25,11 @@ class Movie < ApplicationRecord
           .group('movies.id')
           .having('count(movie_genre_relations.movie_genre_id) = ?', genre_ids.count)
           .pluck(:id)
-        movies = movies.where(id: movie_ids)
       else
         # OR検索
-        movies = movies.where(movie_genre_relations: { movie_genre_id: genre_ids })
+        movie_ids = movies.where(movie_genre_relations: { movie_genre_id: genre_ids }).pluck(:id)
       end
+      movies = movies.where(id: movie_ids)
     end
 
     movies.order(vote_count: :desc, vote_average: :desc)
