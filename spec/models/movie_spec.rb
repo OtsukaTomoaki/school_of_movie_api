@@ -134,6 +134,12 @@ RSpec.describe Movie, type: :model do
           expect(result).to match_array([movie1])
         end
 
+        it 'moviesに関連するmovie_genresが含まれていること' do
+          result = described_class.search(query: '', page: 1, genre_ids: [genre1.id], search_genre_and: search_genre_and)
+          responsed_genre = result.find { |movie| movie.id == movie1.id }.movie_genre_relations.map(&:movie_genre)
+          expect(responsed_genre).to match_array([genre1, genre2])
+        end
+
         it 'ジャンルに一致する映画をvote_countとvote_averageの降順に返すこと' do
           result = described_class.search(query: '', page: 1, genre_ids: [genre2.id], search_genre_and: search_genre_and)
           expect(result).to match_array([movie1, movie2])
@@ -172,6 +178,12 @@ RSpec.describe Movie, type: :model do
         it '存在しないジャンルが指定された場合、空の配列を返すこと' do
           result = described_class.search(query: '', page: 1, genre_ids: [-1], search_genre_and: search_genre_and)
           expect(result).to be_empty
+        end
+
+        it 'moviesに関連するmovie_genresが含まれていること' do
+          result = described_class.search(query: '', page: 1, genre_ids: [genre1.id], search_genre_and: search_genre_and)
+          responsed_genre = result.find { |movie| movie.id == movie1.id }.movie_genre_relations.map(&:movie_genre)
+          expect(responsed_genre).to match_array([genre1, genre2])
         end
       end
     end
