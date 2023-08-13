@@ -22,16 +22,13 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   end
 
   def update
-    user = User.find_by_id(params[:id])
-    user.update(user_update_params)
+    @user = User.find(params[:id])
+    @user.update(user_update_params)
     if avatar_image = avatar_image_params
-      user.avatar_image.attach(io: avatar_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpg" )
+      @user.avatar_image.purge if @user.avatar_image.attached?
+      @user.avatar_image.attach(io: avatar_image, filename: "#{Time.now.to_i}_#{@user.id}.jpg" , content_type: "image/jpg")
     end
-    if user.save!
-      @user = user
-      @avatar_image_size = avatar_image ? avatar_image.length : 0
-      return
-    end
+    @avatar_image_size = avatar_image ? avatar_image.length : 0
   end
 
   def create_with_social_accounts
