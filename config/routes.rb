@@ -27,6 +27,7 @@ Rails.application.routes.draw do
       resources :messages
       resources :movies
       resources :movie_genres
+      resources :movie_user_likes
       resources :background_jobs
     end
   end
