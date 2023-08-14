@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_14_091543) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_14_094332) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -87,7 +87,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_14_091543) do
     t.index ["word"], name: "index_movie_search_words_on_word"
   end
 
-  create_table "movie_user_likes", id: false, charset: "utf8mb4", force: :cascade do |t|
+  create_table "movie_user_likes", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
     t.string "user_id", limit: 36, null: false, comment: "ユーザーID"
     t.string "movie_id", limit: 36, null: false, comment: "映画ID"
     t.datetime "created_at", null: false
