@@ -7,8 +7,8 @@ class MovieUserLikes < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :movie_likes, [:user_id, :movie_id], unique: true
-    add_index :movie_likes, [:user_id], unique: false
-    add_index :movie_likes, [:movie_id], unique: false
+    add_index :movie_user_likes, [:user_id, :movie_id], unique: true
+    add_index :movie_user_likes, [:user_id], unique: false
+    add_index :movie_user_likes, [:movie_id], unique: false
   end
 end
