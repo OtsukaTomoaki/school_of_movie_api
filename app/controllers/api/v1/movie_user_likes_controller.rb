@@ -1,4 +1,11 @@
 class Api::V1::MovieUserLikesController < ApplicationController
+
+  def index
+    movie_id = params[:movie_id]
+    user_id = params[:user_id]
+    @movie_user_likes = MovieUserLike.search(movie_id: movie_id, user_id: user_id)
+  end
+
   def create
     movie_user_like = MovieUserLike.new(movie_user_like_params)
     movie_user_like.user_id = current_user.id

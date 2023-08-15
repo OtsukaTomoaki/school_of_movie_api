@@ -27,8 +27,7 @@ Rails.application.routes.draw do
       resources :messages
       resources :movies
       resources :movie_genres
-
-      post 'movie_user_likes', to: 'movie_user_likes#create'
+      resources :movie_user_likes
       delete 'movie_user_likes', to: 'movie_user_likes#destroy'
       resources :background_jobs
     end
