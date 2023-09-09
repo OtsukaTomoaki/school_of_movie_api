@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_06_164927) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_09_075852) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -93,6 +93,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_06_164927) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["movie_id", "talk_room_id"], name: "index_movie_talk_rooms_on_movie_id_and_talk_room_id", unique: true
+    t.index ["movie_id"], name: "index_movie_talk_rooms_on_movie_id", unique: true
   end
 
   create_table "movie_user_likes", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
