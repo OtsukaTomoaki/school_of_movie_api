@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_14_094332) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_09_075852) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -85,6 +85,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_14_094332) do
     t.datetime "updated_at", null: false
     t.integer "count"
     t.index ["word"], name: "index_movie_search_words_on_word"
+  end
+
+  create_table "movie_talk_rooms", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
+    t.string "movie_id", limit: 36, null: false, comment: "映画ID"
+    t.string "talk_room_id", limit: 36, null: false, comment: "トークルームID"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["movie_id", "talk_room_id"], name: "index_movie_talk_rooms_on_movie_id_and_talk_room_id", unique: true
+    t.index ["movie_id"], name: "index_movie_talk_rooms_on_movie_id", unique: true
   end
 
   create_table "movie_user_likes", id: { type: :string, limit: 36 }, charset: "utf8mb4", force: :cascade do |t|
