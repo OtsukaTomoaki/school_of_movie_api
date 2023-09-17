@@ -4,15 +4,15 @@ RSpec.describe AuthenticationService, type: :service do
   let!(:user) do
     FactoryBot.create(:user,
       name: 'Nancy Molgan',
-      email: 'nancy-pancy-denpcy@gmail.com',
-      password: 'saikyounoP@ssw0rd')
+      email: 'nancy-pancy-denpcy@gmail.com')
   end
   let!(:email_that_does_not_exist) {
     'email_that_does_not_exist@gmail.com'
   }
 
   describe 'authenticate_user_with_token' do
-    context "正しいjwtが引数に指定された場合" do
+    # id, password認証は廃止する
+    xcontext "正しいjwtが引数に指定された場合" do
       let!(:jwt) { jwt = TokenService.issue_by_password!(user.email, user.password) }
       it "ユーザの情報を取得できる" do
         expect(AuthenticationService.authenticate_user_with_token!(jwt)).to eq user
@@ -28,7 +28,8 @@ RSpec.describe AuthenticationService, type: :service do
       end
     end
 
-    context "署名が誤っているjwtが引数に指定された場合" do
+    # id, password認証は廃止する
+    xcontext "署名が誤っているjwtが引数に指定された場合" do
       let!(:invalid_signature_jwt) {
         jwt = TokenService.issue_by_password!(user.email, user.password)
         jwt[0..-3]
@@ -41,8 +42,9 @@ RSpec.describe AuthenticationService, type: :service do
     end
   end
 
-  describe "authenticate_user_with_password!" do
-    context "email, passwordが正しい場合" do
+  # id, password認証は廃止する
+  xdescribe "authenticate_user_with_password!" do
+    xcontext "email, passwordが正しい場合" do
       it "Userのインスタンスが返される" do
         expect(AuthenticationService.authenticate_user_with_password!(
           user.email,

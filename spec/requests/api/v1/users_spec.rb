@@ -11,15 +11,13 @@ RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
     5.times do |i|
       FactoryBot.create(:user,
         name: 'Foo婆バズ',
-        email: "#{User.count}_bar@gmail.com",
-        password: 'Bar1234')
+        email: "#{User.count}_bar@gmail.com")
     end
   }
   let!(:user) {
     user = FactoryBot.create(:user,
       name: 'FOO_BAR_テスト',
-      email: "foo_bar_baz@sample.com",
-      password: 'pass1234')
+      email: "foo_bar_baz@sample.com")
     user
   }
 
@@ -97,8 +95,7 @@ RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
     let!(:user_1) {
       FactoryBot.create(:user,
         name: 'avatar_image',
-        email: "avatar_image@sample.com",
-        password: 'pass1234')
+        email: "avatar_image@sample.com")
     }
     subject {
       get "/api/v1/users/download_avatar_image/#{user_1.id}"

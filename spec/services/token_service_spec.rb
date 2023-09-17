@@ -6,8 +6,7 @@ RSpec.describe TokenService, type: :service do
   let!(:user) {
     FactoryBot.create(:user,
       name: 'FOO_BAR_テスト',
-      email: 'foo_bar_baz@sample.com',
-      password: 'pass1234')
+      email: 'foo_bar_baz@sample.com')
   }
   let!(:social_account_mapping) {
     FactoryBot.create(:social_account_mapping,
@@ -16,7 +15,7 @@ RSpec.describe TokenService, type: :service do
       social_account_id: '1234')
   }
 
-  describe "issue_by_password!" do
+  xdescribe "issue_by_password!" do
     context "存在するユーザのemail, passwordが引数に指定された場合" do
       it "jwtが返されること" do
         jwt = TokenService.issue_by_password!('foo_bar_baz@sample.com', 'pass1234')
@@ -55,7 +54,8 @@ RSpec.describe TokenService, type: :service do
   end
 
   describe "authorization" do
-    context "存在するユーザのauth_headerが引数に指定された場合" do
+    # id, password認証は廃止する
+    xcontext "存在するユーザのauth_headerが引数に指定された場合" do
       it 'ユーザが返されること' do
         jwt = TokenService.issue_by_password!(user.email, user.password)
         authorization_user = TokenService.authorization("bearer #{jwt}")

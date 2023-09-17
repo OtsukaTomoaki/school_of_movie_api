@@ -4,8 +4,7 @@ RSpec.describe "Api::V1::Sessions", type: :request do
   let!(:user) {
     FactoryBot.create(:user,
     name: 'signin shitatou',
-    email: "shitatou@gmail.com",
-    password: 'shitatou1234')
+    email: "shitatou@gmail.com")
   }
 
   let!(:headers) {
@@ -14,25 +13,23 @@ RSpec.describe "Api::V1::Sessions", type: :request do
     }
   }
 
-  context 'サインイン処理の検証' do
+  # ID, password認証は廃止する
+  xcontext 'サインイン処理の検証' do
     let!(:signin_params) {
       {
-        email: 'shitatou@gmail.com',
-        password: 'shitatou1234'
+        email: 'shitatou@gmail.com'
       }.to_json
     }
 
     let!(:invalid_email_signin_params) {
       {
-        email: 'shitatou_ze@gmail.com',
-        password: 'shitatou1234'
+        email: 'shitatou_ze@gmail.com'
       }.to_json
     }
 
     let!(:invalid_password_signin_params) {
       {
-        email: 'shitatou@gmail.com',
-        password: 'shitatou12345678'
+        email: 'shitatou@gmail.com'
       }.to_json
     }
     it '正しいID, Passwordをリクエストした場合、トークンを取得できる' do
