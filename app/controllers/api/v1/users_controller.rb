@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApplicationController
   # include SocialClientService
-  skip_before_action :current_user, only: :create
+  skip_before_action :current_user, only: [:create, :create_with_social_accounts, :download_avatar_image]
 
   def profile
     @user = User.search(@current_user.id)

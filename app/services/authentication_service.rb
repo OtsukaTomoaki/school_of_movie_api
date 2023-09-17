@@ -35,7 +35,7 @@ class AuthenticationService
                 social_account_id: social_account_id,
                 social_id: SocialAccountMapping.social_ids[social_type])
 
-    raise UnAuthorizationError  if mapping.nil?
+    return false if mapping.nil?
 
     User.find_by(email: mapping.email)
   end
