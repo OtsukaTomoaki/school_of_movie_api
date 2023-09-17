@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   namespace :api, {format: 'json'} do
     namespace :v1 do
       get 'users/profile', to: 'users#profile'
-      get 'users/download_avatar_image', to: 'users#download_avatar_image'
+      get 'users/download_avatar_image/:id', to: 'users#download_avatar_image'
       post 'users/create_with_social_accounts', to: 'users#create_with_social_accounts'
       resources :users
 
