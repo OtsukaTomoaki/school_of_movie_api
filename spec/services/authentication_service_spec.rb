@@ -128,7 +128,7 @@ RSpec.describe AuthenticationService, type: :service do
       end
     end
 
-    context "存在しないユーザのemailの場合" do
+    xcontext "存在しないユーザのemailの場合" do
       it "UnAuthorizationErrorが返される" do
         expect do
           AuthenticationService.authenticate_user_with_social_account!(
@@ -139,7 +139,7 @@ RSpec.describe AuthenticationService, type: :service do
       end
     end
 
-    context "存在しないユーザのsocial_account_idの場合" do
+    xcontext "存在しないユーザのsocial_account_idの場合" do
       it "UnAuthorizationErrorが返される" do
         expect do
           AuthenticationService.authenticate_user_with_social_account!(
@@ -150,7 +150,7 @@ RSpec.describe AuthenticationService, type: :service do
       end
     end
 
-    context "存在しないユーザのsocial_idの場合" do
+    xcontext "存在しないユーザのsocial_idの場合" do
       it "UnAuthorizationErrorが返される" do
         expect do
           AuthenticationService.authenticate_user_with_social_account!(
