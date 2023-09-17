@@ -40,7 +40,8 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   end
 
   def download_avatar_image
-    avatar_image = @current_user.avatar_image.download
+    user = User.find(params[:id])
+    avatar_image = user.avatar_image.download
 
     if avatar_image.nil?
       File.open('app/assets/images/default_avatar_image.png') do |file|

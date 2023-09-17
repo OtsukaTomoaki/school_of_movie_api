@@ -94,12 +94,18 @@ RSpec.describe "Api::V1::User", type: :request, authentication: :skip  do
   end
 
   describe "/download_avatar_image" do
+    let!(:user_1) {
+      FactoryBot.create(:user,
+        name: 'avatar_image',
+        email: "avatar_image@sample.com",
+        password: 'pass1234')
+    }
     subject {
-      get "/api/v1/users/download_avatar_image"
+      get "/api/v1/users/download_avatar_image/#{user_1.id}"
     }
     context "アバターが設定されている場合" do
       before {
-        user.avatar_image.attach(io: avatar_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpg" )
+        user_1.avatar_image.attach(io: avatar_image, filename: "#{Time.now.to_i}_#{user.id}.jpg" , content_type: "image/jpg" )
       }
       it "設定済みの画像がダウンロードできること" do
         allow(TokenService).to receive(:authorization).and_return(user)
