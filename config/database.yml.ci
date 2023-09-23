@@ -10,6 +10,6 @@ default: &default
 
 test:
   <<: *default
-  database: funny_cats_api_test
+  database: school_of_movie_api_test
   host: 127.0.0.1
   port: 3306
