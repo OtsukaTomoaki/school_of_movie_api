@@ -1,6 +1,6 @@
 {
     "solargraph.externalServer": {
-        "host": "localhost",
+        "host": "192.168.32.138.nip.io",
         "port": 8091
     },
     "solargraph.transport": "external",

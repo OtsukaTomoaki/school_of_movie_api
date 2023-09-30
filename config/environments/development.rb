@@ -63,6 +63,7 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   config.action_cable.disable_request_forgery_protection = true
-  config.action_cable.allowed_request_origins = [ "http://localhost:8081" ]
-  config.action_cable.url = "wss://localhost:3000/cable"
+  config.action_cable.allowed_request_origins = [ "http://192.168.32.138.nip.io:8081" ]
+  config.action_cable.url = "wss://192.168.32.138.nip.io:3000/cable"
+  config.hosts.clear
 end

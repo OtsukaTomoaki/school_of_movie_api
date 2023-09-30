@@ -60,6 +60,6 @@ Rails.application.configure do
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
   config.action_cable.disable_request_forgery_protection = true
-  config.action_cable.allowed_request_origins = [ "http://localhost:8081" ]
-  config.action_cable.url = "wss://localhost:3000/cable"
+  config.action_cable.allowed_request_origins = [ "http://192.168.32.138.nip.io:8081" ]
+  config.action_cable.url = "wss://192.168.32.138.nip.io:3000/cable"
 end

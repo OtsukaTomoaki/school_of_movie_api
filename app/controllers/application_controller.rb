@@ -20,7 +20,7 @@ class ApplicationController < ActionController::API
   def set_csrf_token
 
     cookies['CSRF-TOKEN'] = {
-      domain: 'localhost:3000', # 親ドメイン
+      domain: '192.168.32.138.nip.io:3000', # 親ドメイン
       value: form_authenticity_token
     }
   end
