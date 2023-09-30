@@ -1,7 +1,7 @@
 module CookiesHelper
   def add_authorization_cookie(value)
     cookies[:authorization] = {
-      domain: 'localhost',
+      domain: ENV['DOMAIN'],
       value: "bearer #{value}"
     }
   end
