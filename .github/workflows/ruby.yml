@@ -25,6 +25,16 @@ jobs:
     strategy:
       matrix:
         ruby-version: ['3.1']
+    env:
+      RAILS_ENV: test
+      RACK_ENV: test
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+      RAILS_SERVE_STATIC_FILES: "true"
+      RAILS_LOG_TO_STDOUT: "true"
+      RAILS_MAX_THREADS: 5
+      DOMAIN: 'localhost:3000'
+      ROOT_URL: 'http://localhost:8081'
+      SPA_DOMAIN: 'localhost'
 
     services:
       db:
