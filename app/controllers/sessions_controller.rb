@@ -26,7 +26,7 @@ class SessionsController < ApplicationController
       )
 
       query = URI.encode_www_form(signin_state: Base64.encode64(signin_json_str))
-      redirect_to ENV['ROOT_URL'] + "signin_with_token?#{query}"
+      redirect_to ENV['ROOT_URL'] + "/signin_with_token?#{query}"
     else
       google_token = auth_hash['credentials']['token']
       onetime_token = OneTimeToken.create({ exchange_json: {
@@ -41,7 +41,7 @@ class SessionsController < ApplicationController
         onetime_token: onetime_token.id
       }.to_json.to_s
       oauth_provider_json = URI.encode_www_form(signup_state: Base64.encode64(signup_json_str))
-      redirect_to ENV['ROOT_URL'] + "signup_google?#{oauth_provider_json}"
+      redirect_to ENV['ROOT_URL'] + "/signup_google?#{oauth_provider_json}"
     end
   end
 

@@ -33,7 +33,7 @@ jobs:
       RAILS_LOG_TO_STDOUT: "true"
       RAILS_MAX_THREADS: 5
       DOMAIN: 'localhost:3000'
-      ROOT_URL: 'http://localhost:8081/'
+      ROOT_URL: 'http://localhost:8081'
       SPA_DOMAIN: 'localhost'
 
     services:
