@@ -7,14 +7,16 @@ class User < ApplicationRecord
   before_save { self.email = email.downcase }
   validates :name, presence: true, length: { maximum: 50 }
   validates :email, presence: true, length: { maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: true
-  validates :password, presence: true, length: { minimum: 6 }, on: :create
-  has_secure_password
-  has_one_attached :avator_image
+  # validates :password, presence: true, length: { minimum: 6 }, on: :create
+  # has_secure_password
+  has_one_attached :avatar_image
 
   has_many :user_tags, dependent: :destroy
+  has_many :talk_room_permissions, dependent: :destroy
+  has_many :message
 
   def User.search(id)
-    includes(:user_tags).find_by(id: id)
+    find_by(id: id)
   end
 
   # 渡された文字列のハッシュ値を返す

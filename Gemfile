@@ -16,7 +16,9 @@ gem "puma", "~> 5.0"
 # gem "jbuilder"
 
 # Use Redis adapter to run Action Cable in production
-# gem "redis", "~> 4.0"
+gem "redis", "~> 4.0"
+
+gem 'redis-rails'
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -62,6 +64,20 @@ gem 'base64'
 
 gem 'uri'
 
+gem 'whenever', require: false
+
+gem 'natto'
+
+gem 'rest-client'
+
+gem 'activerecord-import'
+
+gem 'sanitize'
+
+gem 'kaminari'
+
+gem 'sidekiq'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
@@ -71,6 +87,8 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-byebug'
   gem 'rspec-rails'
+  gem 'rubocop', require: false
+  gem 'solargraph', require: false
 end
 
 group :development do
@@ -81,6 +99,10 @@ end
 group :test do
   gem 'capybara'
   gem 'rspec-rails'
-  gem "factory_bot_rails"
+  gem 'factory_bot_rails'
   gem 'faker'
+  gem 'action-cable-testing'
+  gem 'webmock'
+  gem 'shoulda-matchers'
+  gem 'rails-controller-testing'
 end

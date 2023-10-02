@@ -1,4 +1,4 @@
-class Api::V1::SessionsController < ApplicationController
+class Api::V1::SessionsController < Api::V1::ApplicationController
   skip_before_action :current_user, only: [:create, :remember_me]
 
   def create
@@ -9,7 +9,7 @@ class Api::V1::SessionsController < ApplicationController
       user.remember
       render json: { token: token, remember_token: user.remember_token }, status: :ok
     else
-      render json: user.errors, status: :unauthorized
+      render json: { message: 'emailまたはpasswordが正しくありません' }, status: :unauthorized
     end
   end
 
@@ -20,7 +20,7 @@ class Api::V1::SessionsController < ApplicationController
       user.remember
       render json: { token: token, remember_token: user.remember_token }, status: :ok
     else
-      render json: { }, status: :unauthorized
+      render json: { message: 'emailまたはremember_tokenが正しくありません' }, status: :unauthorized
     end
   end
 end

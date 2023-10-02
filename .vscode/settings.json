@@ -1,0 +1,10 @@
+{
+    "solargraph.externalServer": {
+        "host": "localhost",
+        "port": 8091
+    },
+    "solargraph.transport": "external",
+    "solargraph.logLevel": "debug",
+    "solargraph.diagnostics": true,
+    "solargraph.hover": false
+}

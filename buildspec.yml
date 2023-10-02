@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - $(aws ecr get-login --no-include-email --region YOUR_REGION)
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+  build:
+    commands:
+      - docker build -t school_of_movie_api:latest .
+      - docker tag school_of_movie_api:latest YOUR_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/school_of_movie_api:$IMAGE_TAG
+  post_build:
+    commands:
+      - docker push YOUR_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/school_of_movie_api:$IMAGE_TAG

@@ -3,9 +3,10 @@ services:
   db:
     platform: linux/x86_64
     image: mysql:5.7
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
       MYSQL_ROOT_PASSWORD: myrootpass
-      MYSQL_DATABASE: funny_cats_api_development
+      MYSQL_DATABASE: school_of_movie_api_development
       MYSQL_USER: myuser
       MYSQL_PASSWORD: mypass
     ports:
@@ -14,17 +15,40 @@ services:
       - mysql_data:/var/lib/mysql
   web:
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command: bash -c "rm -f tmp/pids/server.pid && cron & bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - .:/funny_cats_api/
+      - .:/school_of_movie_api/
     ports:
       - 3000:3000
     links:
       - db
     depends_on:
       - db
+      - redis
     tty: true
     stdin_open: true
+    environment:
+      REDIS_HOST: redis:6379
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq
+    volumes:
+      - .:/school_of_movie_api/
+    depends_on:
+      - db
+      - redis
+    environment:
+      REDIS_HOST: redis:6379
+  solargraph:
+    build: .
+    command: bundle exec solargraph socket --host=0.0.0.0 --port=7658
+    volumes:
+      - .:/school_of_movie_api/
+    depends_on:
+      - db
+      - redis
+    ports:
+      - 8091:7658
   minio:
     image: 'minio/minio'
     container_name: minio
@@ -38,6 +62,12 @@ services:
     ports:
         - '9000:9000'
         - '9001:9001'
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis/data:/export
 volumes:
   mysql_data:
   minio:

@@ -25,7 +25,9 @@ Rails.application.configure do
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
-  config.cache_store = :null_store
+  # config.cache_store = :null_store
+  config.cache_store = :redis_store, "redis://#{ENV['REDIS_HOST']}/0/cache", { expires_in: 90.minutes }
+  config.active_record.cache_versioning = false
 
   # Raise exceptions instead of rendering exception templates.
   config.action_dispatch.show_exceptions = false
@@ -57,4 +59,7 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
+  config.action_cable.disable_request_forgery_protection = true
+  config.action_cable.allowed_request_origins = [ ENV['ROOT_URL'] ]
+  config.action_cable.url = "wss://#{ENV['DOMAIN']}/cable"
 end

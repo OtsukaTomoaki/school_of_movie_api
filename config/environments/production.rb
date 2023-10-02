@@ -49,11 +49,12 @@ Rails.application.configure do
   config.log_tags = [ :request_id ]
 
   # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
+  config.cache_store = :redis_store, "redis://#{ENV['REDIS_HOST']}/0/cache", { expires_in: 90.minutes }
+  config.active_record.cache_versioning = false
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter     = :resque
-  # config.active_job.queue_name_prefix = "funny_cats_api_production"
+  # config.active_job.queue_name_prefix = "school_of_movie_api_production"
 
   config.action_mailer.perform_caching = false
 
@@ -83,4 +84,5 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+  config.action_cable.disable_request_forgery_protection = true
 end
