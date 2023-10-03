@@ -11,7 +11,7 @@ phases:
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
   build:
     commands:
-      - docker build -t school_of_movie:latest .
+      - docker build --platform linux/x86_64 -t school_of_movie:latest .
       - docker tag school_of_movie:latest $ACCOUNT_ID.dkr.ecr.ap-northeast-1.amazonaws.com/school_of_movie:latest
   post_build:
     commands:
