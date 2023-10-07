@@ -1,4 +1,4 @@
-class Api::V1::MovieUserLikesController < ApplicationController
+class Api::V1::MovieUserLikesController < Api::V1::ApplicationController
 
   def index
     movie_id = params[:movie_id]
