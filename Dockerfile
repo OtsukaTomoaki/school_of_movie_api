@@ -21,5 +21,5 @@ RUN rails active_storage:install
 
 COPY . /school_of_movie_api
 
-RUN bundle exec whenever --update-crontab
+# RUN bundle exec whenever --update-crontab
 RUN export MECAB_PATH=/usr/lib/aarch64-linux-gnu/libmecab.so.2

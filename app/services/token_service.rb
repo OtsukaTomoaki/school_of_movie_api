@@ -22,14 +22,18 @@ class TokenService
       issue_token(user)
     end
 
-    def authorization(auth_header)
-      jwt = auth_header.split(' ')[1]
+    def authorization(jwt)
       jwt_payload = validate_jwt(jwt)
       if jwt_payload and not user = User.find(jwt_payload.first['sub'])
         raise InvalidJwtError
       end
       user
     end
+
+    def claims(jwt)
+      validate_jwt(jwt)
+    end
+
     private
 
       def issue_token(user)

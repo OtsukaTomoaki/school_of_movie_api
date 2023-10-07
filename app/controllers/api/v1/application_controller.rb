@@ -8,8 +8,7 @@ class Api::V1::ApplicationController < ActionController::API
 
   def current_user
     begin
-      authorization_header = request.headers['Authorization'].present? ? request.headers['Authorization'] : request.cookies["authorization"]
-      @current_user ||= TokenService.authorization(authorization_header)
+      @current_user ||= TokenService.authorization(authorization_token)
     rescue => e
       p request.headers, e
       return response_unauthorized
@@ -44,5 +43,12 @@ class Api::V1::ApplicationController < ActionController::API
   # 500 Internal Server Error
   def response_internal_server_error
     render status: 500, json: { status: 500, message: 'Internal Server Error' }
+  end
+
+  def authorization_token
+    return @authorization_token if @authorization_token.present?
+    auth_header = request.headers['Authorization'].present? ? request.headers['Authorization'] : request.cookies["authorization"]
+    @authorization_token = auth_header.split(' ').last if auth_header
+    @authorization_token
   end
 end

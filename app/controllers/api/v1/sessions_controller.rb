@@ -13,6 +13,10 @@ class Api::V1::SessionsController < Api::V1::ApplicationController
     end
   end
 
+  def identity
+    @claims = OpenStruct.new(TokenService.claims(authorization_token)[0])
+  end
+
   def remember_me
     user = User.find_by(email: params[:email].downcase)
     if user.authenticated?(params[:remember_token])
