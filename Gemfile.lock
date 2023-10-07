@@ -385,6 +385,7 @@ GEM
       yard (~> 0.9, >= 0.9.24)
     thor (1.2.2)
     tilt (2.1.0)
+    timecop (0.9.8)
     timeout (0.4.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -449,6 +450,7 @@ DEPENDENCIES
   shoulda-matchers
   sidekiq
   solargraph
+  timecop
   tzinfo-data
   uri
   webmock

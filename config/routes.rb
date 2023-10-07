@@ -19,7 +19,9 @@ Rails.application.routes.draw do
       post 'users/create_with_social_accounts', to: 'users#create_with_social_accounts'
       resources :users
 
+      get 'sessions/identity', to: 'sessions#identity'
       post 'sessions/remember_me', to: 'sessions#remember_me'
+
       resources :sessions
 
       resources :user_tags
