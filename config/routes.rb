@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   mount ActionCable.server => '/cable'
   mount Sidekiq::Web => "/sidekiq"
 
-  root to: 'rooms#show'
+  # root to: 'rooms#show'
 
   get 'auth/:provider/callback', to: 'sessions#create'
   resources :sessions, only: %i[index new create destroy]
