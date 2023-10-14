@@ -30,6 +30,7 @@ Rails.application.routes.draw do
       resources :movies
       resources :movie_genres
       resources :movie_user_likes
+      resources :health_check, only: [:index]
       get 'movie_talk_rooms/:movie_id', to: 'movie_talk_rooms#by_movie_id'
       delete 'movie_user_likes', to: 'movie_user_likes#destroy'
       resources :background_jobs
