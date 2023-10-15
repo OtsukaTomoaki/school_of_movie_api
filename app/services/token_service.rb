@@ -1,6 +1,6 @@
 class TokenService
   include CustomException
-  @rsa_private = OpenSSL::PKey::RSA.new(File.read(Rails.root.join('auth/service.key')))
+  @rsa_private = SecretKeyService.get_secret
 
   class << self
     def issue_by_password!(email, password)

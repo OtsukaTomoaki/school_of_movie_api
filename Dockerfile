@@ -1,13 +1,14 @@
 FROM ruby:3.1.2
 
 RUN apt-get update -qq && apt-get install -y libxslt-dev liblzma-dev patch build-essential libpq-dev nodejs default-mysql-client vim cron
-RUN apt-get install libmecab2 libmecab-dev mecab mecab-ipadic mecab-ipadic-utf8 mecab-utils
+RUN apt-get install libmecab2 libmecab-dev mecab mecab-ipadic mecab-ipadic-utf8 mecab-utils ruby-devel
 
 RUN mkdir /school_of_movie_api
 
 RUN gem install nokogiri --platform=ruby
 RUN gem install solargraph
 RUN gem install mecab natto
+RUN gem install aws-sdk
 
 RUN bundle config set force_ruby_platform true
 

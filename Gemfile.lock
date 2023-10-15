@@ -87,6 +87,9 @@ GEM
       aws-sdk-core (~> 3, >= 3.181.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.6)
+    aws-sdk-secretsmanager (1.83.0)
+      aws-sdk-core (~> 3, >= 3.184.0)
+      aws-sigv4 (~> 1.1)
     aws-sigv4 (1.6.0)
       aws-eventstream (~> 1, >= 1.0.2)
     backport (1.2.0)
@@ -416,6 +419,7 @@ DEPENDENCIES
   action-cable-testing
   activerecord-import
   aws-sdk-s3
+  aws-sdk-secretsmanager
   base64
   bcrypt
   bootsnap
