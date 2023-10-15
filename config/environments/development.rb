@@ -65,4 +65,5 @@ Rails.application.configure do
   config.action_cable.disable_request_forgery_protection = true
   config.action_cable.allowed_request_origins = [ ENV['ROOT_URL'] ]
   config.action_cable.url = "wss://#{ENV['DOMAIN']}/cable"
+  config.hosts << ENV['DOMAIN']
 end
