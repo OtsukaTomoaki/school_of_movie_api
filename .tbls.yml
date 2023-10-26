@@ -1,0 +1,4 @@
+
+dns: "mysql2://myuser:mypass@localhost:3306/school_of_movie_api_test"
+
+docPath: doc/schema
