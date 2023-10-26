@@ -75,6 +75,8 @@ jobs:
           gem install bundler
           gem install mecab natto
           bundle install --jobs 4 --retry 3 --path vendor/bundle
+          wget https://github.com/k1LoW/tbls/releases/download/v1.19.0/tbls_v1.19.0_linux_amd64.tar.gz
+          tar zxvf tbls_v1.19.0_linux_amd64.tar.gz
 
       - name: Setup test data
         shell: bash
