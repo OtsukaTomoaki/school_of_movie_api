@@ -117,12 +117,12 @@ jobs:
           echo "pr_title=${pr_title}" >> $GITHUB_OUTPUT
           echo "pr_author=${pr_author}" >> $GITHUB_OUTPUT
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN }}
           title: "Update generated documentation"
           body: |
             [${{ steps.load_pr.outputs.pr_title }}](${{ steps.load_pr.outputs.pr_url }}) でスキーマが更新されたのでスキーマのドキュメントも更新します
