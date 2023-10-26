@@ -1,4 +1,4 @@
 
-dns: "mysql2://myuser:mypass@db:3306/school_of_movie_api_test"
+dns: "mysql2://root:myrootpass@127.0.0.1:3306/school_of_movie_api_test"
 
 docPath: doc/schema
