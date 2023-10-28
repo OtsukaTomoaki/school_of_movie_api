@@ -7,8 +7,8 @@ local:
   access_key_id: user
   secret_access_key: 123456789o
   endpoint: http://minio:9000
-  bucket: projects-api
-  region: us-east-1
+  bucket: school-of-movie-api
+  region: ap-northeast-1
   force_path_style: true
 
 # Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
