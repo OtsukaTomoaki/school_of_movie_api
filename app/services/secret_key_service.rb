@@ -28,8 +28,10 @@ class SecretKeyService
           # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
           raise e
         end
+        p get_secret_value_response.secret_string
+        p get_secret_value_response.secret_string.gsub("\\n", "\n")
 
-        OpenSSL::PKey::RSA.new(get_secret_value_response.secret_string)
+        OpenSSL::PKey::RSA.new(get_secret_value_response.secret_string.gsub("\\n", "\n"))
       end
 
       def get_secret_from_current_key
