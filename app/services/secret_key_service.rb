@@ -36,7 +36,7 @@ class SecretKeyService
           OpenSSL::PKey::RSA.new(secret.gsub("\\n", "\n"))
         rescue => e
           p e
-          secret = JSON.parse(get_secret_value_response.gsub("\n", '\\n'))['school-of-movie-service-key'].split("\n").join("\n")
+          secret = JSON.parse(get_secret_value_response.secret_string.gsub("\n", '\\n'))['school-of-movie-service-key'].split("\n").join("\n")
           p secret
           OpenSSL::PKey::RSA.new(secret)
         end
