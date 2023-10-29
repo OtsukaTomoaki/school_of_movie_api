@@ -14,11 +14,11 @@ class SessionsController < ApplicationController
         converted_param[:email],
         auth_hash_param.uid,
         :google))
-      # user.remember
+      user.remember
 
       signin_json_str = {
         email: user.email,
-        remember_token: '',
+        remember_token: user.remember_token,
       }.to_json.to_s
 
       add_authorization_cookie(
