@@ -28,11 +28,17 @@ Rails.application.configure do
 
   #   config.cache_store = :null_store
   # end
-  config.cache_store = :redis_store, "redis://redis:6379/0/cache", { expires_in: 90.minutes }
+  cache_url = ENV['CACHE_URL'].present? ? ENV['CACHE_URL'] : "redis://redis:6379/0/cache"
+  config.cache_store = :redis_store, cache_url, { expires_in: 90.minutes }
+
   config.active_record.cache_versioning = false
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  if ENV['STORAGE_SERVICE'].present?
+    config.active_storage.service = ENV['STORAGE_SERVICE'].to_sym
+  else
+    config.active_storage.service = :local
+  end
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
