@@ -31,7 +31,7 @@ class SecretKeyService
         p get_secret_value_response.secret_string
         p get_secret_value_response.secret_string.gsub("\\n", "\n")
 
-        OpenSSL::PKey::RSA.new(get_secret_value_response.secret_string.gsub("\\n", "\n"))
+        OpenSSL::PKey::RSA.new(get_secret_value_response.secret_string['school-of-movie-service-key'])
       end
 
       def get_secret_from_current_key
