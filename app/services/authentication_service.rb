@@ -2,7 +2,7 @@ class AuthenticationService
   include CustomException
 
   def self.authenticate_user_with_token!(token)
-    rsa_private = OpenSSL::PKey::RSA.new(File.read(Rails.root.join('auth/service.key')))
+    rsa_private = SecretKeyService.get_secret
     begin
       decoded_token = JWT.decode(token, rsa_private, true, { algorithm: 'RS256' })
     rescue JWT::DecodeError, JWT::ExpiredSignature, JWT::VerificationError

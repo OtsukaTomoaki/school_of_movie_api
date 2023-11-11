@@ -14,14 +14,14 @@ default: &default
   encoding: utf8mb4
   charset: utf8mb4
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: root
-  password: myrootpass
-  host: db
+  username: <%= ENV["MYSQL_USER"] %>
+  password: <%= ENV["MYSQL_PASSWORD"] %>
+  host: <%= ENV["MYSQL_HOST"] %>
   socket: /tmp/mysql.sock
 
 development:
   <<: *default
-  database: school_of_movie_api_development
+  database: <%= ENV["MYSQL_DATABASE"] %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -52,6 +52,5 @@ test:
 #
 production:
   <<: *default
-  database: school_of_movie_api_production
-  username: school_of_movie_api
-  password: <%= ENV["school_of_movie_api_DATABASE_PASSWORD"] %>
+  database: <%= ENV["MYSQL_DATABASE"] %>
+  password: <%= ENV["MYSQL_PASSWORD"] %>

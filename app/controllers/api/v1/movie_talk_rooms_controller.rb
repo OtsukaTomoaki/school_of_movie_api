@@ -1,7 +1,8 @@
-class Api::V1::MovieTalkRoomsController < ApplicationController
+class Api::V1::MovieTalkRoomsController < Api::V1::ApplicationController
   def by_movie_id
     movie_id = params[:movie_id]
     @movie_talk_room = MovieTalkRoom.find_by(movie_id: movie_id)
+
     if @movie_talk_room.nil?
       # トークルームが存在しない場合は作成する
       movie = Movie.find(movie_id)

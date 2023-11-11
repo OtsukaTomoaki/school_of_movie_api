@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   mount ActionCable.server => '/cable'
   mount Sidekiq::Web => "/sidekiq"
 
-  root to: 'rooms#show'
+  # root to: 'rooms#show'
 
   get 'auth/:provider/callback', to: 'sessions#create'
   resources :sessions, only: %i[index new create destroy]
@@ -19,7 +19,9 @@ Rails.application.routes.draw do
       post 'users/create_with_social_accounts', to: 'users#create_with_social_accounts'
       resources :users
 
+      get 'sessions/identity', to: 'sessions#identity'
       post 'sessions/remember_me', to: 'sessions#remember_me'
+
       resources :sessions
 
       resources :user_tags
@@ -28,6 +30,7 @@ Rails.application.routes.draw do
       resources :movies
       resources :movie_genres
       resources :movie_user_likes
+      resources :health_check, only: [:index]
       get 'movie_talk_rooms/:movie_id', to: 'movie_talk_rooms#by_movie_id'
       delete 'movie_user_likes', to: 'movie_user_likes#destroy'
       resources :background_jobs

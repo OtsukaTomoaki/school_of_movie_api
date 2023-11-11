@@ -9,8 +9,7 @@ class ApplicationController < ActionController::API
 
   def current_user
     begin
-      authorization_header = request.headers['Authorization'].present? ? request.headers['Authorization'] : request.cookies["authorization"]
-      @current_user ||= TokenService.authorization(authorization_header)
+      @current_user ||= TokenService.authorization(authorization_token)
     rescue => e
       p request.headers, e
       false
@@ -23,5 +22,12 @@ class ApplicationController < ActionController::API
       domain: ENV['DOMAIN'], # 親ドメイン
       value: form_authenticity_token
     }
+  end
+
+  def authorization_token
+    return @authorization_token if @authorization_token.present?
+    auth_header = request.headers['Authorization'].present? ? request.headers['Authorization'] : request.cookies["authorization"]
+    @authorization_token = auth_header.split(' ').last if auth_header
+    @authorization_token
   end
 end

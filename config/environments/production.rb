@@ -31,8 +31,16 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  if ENV['STORAGE_SERVICE'].present?
+    config.active_storage.service = ENV['STORAGE_SERVICE'].to_sym
+  else
+    config.active_storage.service = :local
+  end
 
+  cache_url = ENV['CACHE_URL'].present? ? ENV['CACHE_URL'] : "redis://redis:6379/0/cache"
+  config.cache_store = :redis_store, cache_url, { expires_in: 90.minutes }
+
+  config.active_record.cache_versioning = false
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
   # config.action_cable.url = "wss://example.com/cable"
@@ -49,7 +57,6 @@ Rails.application.configure do
   config.log_tags = [ :request_id ]
 
   # Use a different cache store in production.
-  config.cache_store = :redis_store, "redis://#{ENV['REDIS_HOST']}/0/cache", { expires_in: 90.minutes }
   config.active_record.cache_versioning = false
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
@@ -85,4 +92,7 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
   config.action_cable.disable_request_forgery_protection = true
+  config.action_cable.allowed_request_origins = [ ENV['ROOT_URL'] ]
+  config.action_cable.url = "wss://#{ENV['DOMAIN']}/cable"
+  config.hosts << ENV['DOMAIN']
 end

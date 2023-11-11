@@ -5,13 +5,17 @@
 # This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
 # For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
 
-name: Ruby
+name: Genarate ER Diagram
 
 on:
   push:
-    branches: [ "develop", "master" ]
+    branches: [ "develop" ]
+    paths:
+      - 'db/schema.rb'
   pull_request:
-    branches: [ "develop", "master" ]
+    branches: [ "develop" ]
+    paths:
+      - 'db/schema.rb'
 
 env:
   REDIS_HOST: 127.0.0.1:6379
@@ -35,6 +39,7 @@ jobs:
       DOMAIN: 'localhost:3000'
       ROOT_URL: 'http://localhost:8081'
       SPA_DOMAIN: 'localhost'
+      MYSQL_HOST: db
 
     services:
       db:
@@ -74,6 +79,8 @@ jobs:
           gem install bundler
           gem install mecab natto
           bundle install --jobs 4 --retry 3 --path vendor/bundle
+          wget https://github.com/k1LoW/tbls/releases/download/v1.19.0/tbls_v1.19.0_linux_amd64.tar.gz
+          tar zxvf tbls_v1.19.0_linux_amd64.tar.gz
 
       - name: Setup test data
         shell: bash
@@ -92,9 +99,39 @@ jobs:
         env:
           RAILS_ENV: test
 
-      - name: Run tests
-        shell: bash
-        run: |
-          bundle exec rspec
+      - name: Checkout base branch
+        uses: actions/checkout@v3
+      
+      - name: Setup tbls
+        uses: k1low/setup-tbls@v1
+    
+      - name: Run tbls
         env:
-          RAILS_ENV: test
+          DATABASE: test_db
+        # --force をつけるとすでにあるファイルに対して上書きすることが可能
+        run: tbls doc
+
+      - name: Load PR Infomation
+        id: load_pr
+        run: |
+          pr_url=$(gh pr list --state merged --search "sha:${{ github.sha }}" --json "url" -q ".[0].url")
+          pr_title=$(gh pr list --state merged --search "sha:${{ github.sha }}" --json "title" -q ".[0].title")
+          pr_author=$(gh pr list --state merged --search "sha:${{ github.sha }}" --json "author" -q ".[0].author.login")
+          echo "pr_url=${pr_url}" >> $GITHUB_OUTPUT
+          echo "pr_title=${pr_title}" >> $GITHUB_OUTPUT
+          echo "pr_author=${pr_author}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.TOKEN }}
+          title: "Update generated documentation"
+          body: |
+            [${{ steps.load_pr.outputs.pr_title }}](${{ steps.load_pr.outputs.pr_url }}) でスキーマが更新されたのでスキーマのドキュメントも更新します
+          commit-message: "update generated documentation"
+          base: develop
+          branch: feat/update-generated-docs
+          reviewers: ${{ steps.load_pr.outputs.pr_author }}
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>

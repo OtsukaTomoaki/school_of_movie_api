@@ -1,0 +1,4 @@
+
+dsn: mysql://root:myrootpass@127.0.0.1:3306/school_of_movie_api_test
+
+docPath: doc/schema
