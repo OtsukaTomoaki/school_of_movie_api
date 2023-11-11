@@ -30,16 +30,8 @@ class SecretKeyService
         end
         secret = get_secret_value_response.secret_string['school-of-movie-service-key']
 
-        p secret
-        p secret.gsub("\\n", "\n")
-        begin
-          OpenSSL::PKey::RSA.new(secret.gsub("\\n", "\n"))
-        rescue => e
-          p e
-          secret = JSON.parse(get_secret_value_response.secret_string.gsub("\n", '\\n'))['school-of-movie-service-key'].split("\n").join("\n")
-          p secret
-          OpenSSL::PKey::RSA.new(secret)
-        end
+        secret = JSON.parse(get_secret_value_response.secret_string.gsub("\n", '\\n'))['school-of-movie-service-key'].split("\n").join("\n")
+        OpenSSL::PKey::RSA.new(secret)
       end
 
       def get_secret_from_current_key
