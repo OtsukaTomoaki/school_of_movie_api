@@ -5,7 +5,7 @@ module AuthParamConverter
     {
       name: auth_hash.info.name,
       email: auth_hash.info.email,
-      # image: auth_hash.info.image,
+      image: auth_hash.info.image,
     }
   end
 end

@@ -35,3 +35,4 @@ docker/minio/data/*
 /config/credentials/development.key
 
 service.key
+/config/credentials/production.key

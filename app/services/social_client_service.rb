@@ -22,6 +22,7 @@ class SocialClientService
           social_account_id: profile['id']
         })
       end
+      user
     end
 
     private

@@ -8,6 +8,7 @@ RUN mkdir /school_of_movie_api
 RUN gem install nokogiri --platform=ruby
 RUN gem install solargraph
 RUN gem install mecab natto
+RUN gem install aws-sdk
 
 RUN bundle config set force_ruby_platform true
 

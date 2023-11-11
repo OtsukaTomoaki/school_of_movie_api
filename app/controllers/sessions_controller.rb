@@ -18,7 +18,7 @@ class SessionsController < ApplicationController
 
       signin_json_str = {
         email: user.email,
-        remember_token: user.remember_token
+        remember_token: user.remember_token,
       }.to_json.to_s
 
       add_authorization_cookie(
@@ -38,7 +38,8 @@ class SessionsController < ApplicationController
       signup_json_str = {
         name: converted_param[:name],
         email: converted_param[:email],
-        onetime_token: onetime_token.id
+        onetime_token: onetime_token.id,
+        image: converted_param[:image]
       }.to_json.to_s
       oauth_provider_json = URI.encode_www_form(signup_state: Base64.encode64(signup_json_str))
       redirect_to ENV['ROOT_URL'] + "/signup_google?#{oauth_provider_json}"
