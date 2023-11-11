@@ -10,8 +10,12 @@ name: Genarate ER Diagram
 on:
   push:
     branches: [ "develop" ]
+    paths:
+      - 'db/schema.rb'
   pull_request:
     branches: [ "develop" ]
+    paths:
+      - 'db/schema.rb'
 
 env:
   REDIS_HOST: 127.0.0.1:6379
