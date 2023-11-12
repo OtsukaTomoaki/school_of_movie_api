@@ -38,7 +38,7 @@ Rails.application.configure do
   end
 
   cache_url = ENV['CACHE_URL'].present? ? ENV['CACHE_URL'] : "redis://redis:6379/0/cache"
-  config.cache_store = :redis_store, cache_url, { expires_in: 90.minutes }
+  config.cache_store = :redis_store, cache_url, { expires_in: 5.minutes }
 
   config.active_record.cache_versioning = false
   # Mount Action Cable outside main process or domain.
