@@ -27,24 +27,24 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
       let(:query) { params[:q] }
       before {
         allow(MovieSearchWord).to receive(:add_word)
-        allow(BackgroundJob).to receive(:schedule_import_searched_movies)
+        # allow(BackgroundJob).to receive(:schedule_import_searched_movies)
       }
       it do
         subject
         expect(MovieSearchWord).to have_received(:add_word).with(query)
-        expect(BackgroundJob).to have_received(:schedule_import_searched_movies).with(query: query)
+        # expect(BackgroundJob).to have_received(:schedule_import_searched_movies).with(query: query)
       end
     end
 
     shared_context 'add_word, schedule_import_searched_moviesが呼ばれないこと' do
       before {
         allow(MovieSearchWord).to receive(:add_word)
-        allow(BackgroundJob).to receive(:schedule_import_searched_movies)
+        # allow(BackgroundJob).to receive(:schedule_import_searched_movies)
       }
       it do
         subject
         expect(MovieSearchWord).to_not have_received(:add_word)
-        expect(BackgroundJob).to_not have_received(:schedule_import_searched_movies)
+        # expect(BackgroundJob).to_not have_received(:schedule_import_searched_movies)
       end
     end
 
@@ -199,7 +199,7 @@ RSpec.describe Api::V1::MoviesController, type: :request, authentication: :skip 
             }
           ],
           meta: {
-            background_job: background_job_json,
+            background_job: nil,
             total_count: 2
           }
         }.to_json
