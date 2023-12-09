@@ -9,7 +9,7 @@ class Api::V1::MoviesController < Api::V1::ApplicationController
     @movies = Movie.search(query: query, genre_ids: genre_ids, search_genre_and: search_genre_and, page: page, per_page: per_page)
 
     if query.present?
-      @background_job = BackgroundJob.schedule_import_searched_movies(query: query)
+      @background_job = nil
       if page == 1
         # 検索されたワードをDBに保存する
         MovieSearchWord.add_word(query)
